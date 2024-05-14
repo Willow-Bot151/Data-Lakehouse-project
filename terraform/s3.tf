@@ -1,10 +1,10 @@
-resource "aws_s3_bucket_versioning" "terraform_state" {
-    bucket = aws_s3_bucket.terraform_state.id
+# resource "aws_s3_bucket_versioning" "terraform_state" {
+#     bucket = aws_s3_bucket.terraform_state.id
 
-    versioning_configuration {
-      status = "Enabled"
-    }
-}
+#     versioning_configuration {
+#       status = "Enabled"
+#     }
+# }
 
 resource "aws_s3_bucket" "ingestion_code_bucket" {
   bucket_prefix = "nc-team-reveries-ingestion-code-"
@@ -20,13 +20,13 @@ resource "aws_s3_object" "lambda_code" {
   source = "${path.module}/../function.zip"
 }
 
-resource "aws_s3_bucket_notification" "bucket_notification" {
-  bucket = aws_s3_bucket.ingestion_data_bucket.id
+# resource "aws_s3_bucket_notification" "bucket_notification" {
+#   bucket = aws_s3_bucket.ingestion_data_bucket.id
 
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.s3_file_reader.arn
-    events              = ["s3:ObjectCreated:*"]
-  }
+#   lambda_function {
+#     lambda_function_arn = aws_lambda_function.de-tote-sys.arn
+#     events              = ["s3:ObjectCreated:*"]
+#   }
 
-  depends_on = [aws_lambda_permission.allow_s3]
-}
+#   depends_on = [aws_lambda_permission.allow_s3]
+# }
