@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "nc-team-reveries-lambda-state1"
+    bucket = "nc-team-reveries-lambda-state"
     key = "de-tote-sys/terraform.tfstate"
     region = "eu-west-2"
   }
