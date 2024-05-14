@@ -7,11 +7,11 @@
 # }
 
 resource "aws_s3_bucket" "ingestion_code_bucket" {
-  bucket_prefix = "nc-team-reveries-ingestion-code-"
+  bucket = "nc-team-reveries-ingestion-code"
 }
 
 resource "aws_s3_bucket" "ingestion_data_bucket" {
-  bucket_prefix = "nc-team-reveries-ingestion-data-"
+  bucket = "nc-team-reveries-ingestion-data"
 }
 
 resource "aws_s3_object" "lambda_code" {
