@@ -50,3 +50,15 @@ resource "aws_sns_topic_subscription" "email_lambda_error_messages" {
 #     endpoint = "annshelly@hotmail.com"
 #     topic_arn = aws_sns_topic.great-quote-notify.arn
 # }
+
+
+
+
+
+
+
+
+
+
+
+
