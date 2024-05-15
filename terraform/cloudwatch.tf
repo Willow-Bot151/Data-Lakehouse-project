@@ -1,14 +1,20 @@
 # This whole section may depend on error handling in python code
 # subject to change dependent on error messages being logged
 
-resource "aws_cloudwatch_log_group" "ingestion_lambda" {
-  name = "/aws/lambda/ingestion_lambda"   # needs to change depending on location of cloudwatch logging
+resource "aws_cloudwatch_log_group" "ingestion_lambda_log_group" {
+  name = "/aws/lambda/ingestion_lambda_handler/logs"   # needs to change depending on location of cloudwatch logging
+  retention_in_days = 30
+}
+
+resource "aws_cloudwatch_log_stream" "ingestion_lambda_log_stream" {
+  name           = "ingestion-lambda-log-stream"
+  log_group_name = aws_cloudwatch_log_group.ingestion_lambda_log_group.name
 }
 
 resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_error_messages" {
   name           = "IngestionErrors"
-  pattern        = "ERROR!:"           # needs to be changed depending on error handling
-  log_group_name = "/aws/lambda/errors "  # needs changing
+  pattern        = "ERROR"           # needs to be changed depending on error handling
+  log_group_name = aws_cloudwatch_log_group.ingestion_lambda_log_group.name  # needs changing
   metric_transformation {
     name = "ErrorCount"
     namespace = "Error"

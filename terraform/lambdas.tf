@@ -8,7 +8,7 @@ data "archive_file" "lambda" {
 # Create a lambda function
 resource "aws_lambda_function" "ingestion_lambda_handler" {
     function_name = "${var.lambda_name}"
-   # filename      = data.archive_file.lambda.output_path
+#    filename      = data.archive_file.lambda.output_path
     s3_bucket = aws_s3_object.lambda_code.bucket
     s3_key = aws_s3_object.lambda_code.key    #--- has to be changed
     role = aws_iam_role.lambda_role.arn
@@ -28,13 +28,13 @@ resource "aws_lambda_permission" "lambda_invoke" {
 }
 
 
-# resource "aws_lambda_permission" "allow_eventbridge" {
-#   action = "lambda:InvokeFunction"
-#   function_name = aws_lambda_function.ingestion_lambda_handler.function_name
-#   principal = "events.amazonaws.com"
-#   source_arn = aws_cloudwatch_event_rule.scheduler.arn
-#   source_account = data.aws_caller_identity.current.account_id
-# }
+resource "aws_lambda_permission" "allow_eventbridge" {
+  action = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.ingestion_lambda_handler.function_name
+  principal = "events.amazonaws.com"
+  source_arn = aws_cloudwatch_event_rule.ingestion_scheduler.arn
+  source_account = data.aws_caller_identity.current.account_id
+}
 
 resource "aws_lambda_layer_version" "ingestion_layer" {
   layer_name = "ingestion_layer"
