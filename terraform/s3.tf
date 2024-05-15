@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "ingestion_bucket" {
 resource "aws_s3_object" "lambda_code" {
   bucket = aws_s3_bucket.ingestion_bucket.bucket
   key = "ingestion_code/sql_utils.zip"       # ----- has to be changed 
-  source = "${path.module}/../src/ingestion/utils/sql_utils.py"       # --- has to be changed
+  source = "${path.module}/../src/ingestion/utils/sql_utils.zip"       # --- has to be changed
 }
 
 

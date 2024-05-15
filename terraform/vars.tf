@@ -10,7 +10,7 @@ variable "aws_region" {
 
 variable "python_runtime" {
   type = string
-  default = "python3.12"
+  default = "python3.11"
 }
 
 data "aws_caller_identity" "current" {}
