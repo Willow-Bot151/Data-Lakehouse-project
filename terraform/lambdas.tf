@@ -1,5 +1,3 @@
-
-
 data "archive_file" "lambda" {
   type        = "zip"
   output_file_mode = "0666"
