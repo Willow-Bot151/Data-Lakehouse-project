@@ -24,7 +24,7 @@ resource "aws_s3_object" "lambda_code" {
 
 
 
-resource "aws_s3_bucket_notification" "bucket_notification" {
+resource "aws_s3_bucket_notification" "ingestion_lambda_trigger" {
   bucket = aws_s3_bucket.ingestion_bucket.id
 
   lambda_function {
