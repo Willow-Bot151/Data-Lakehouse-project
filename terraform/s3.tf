@@ -12,6 +12,10 @@ resource "aws_s3_bucket" "ingestion_code_bucket" {
 
 resource "aws_s3_bucket" "ingestion_data_bucket" {
   bucket = "nc-team-reveries-ingestion-data"
+  versioning_configuration {
+    status = "Enabled"
+  }
+
 }
 
 resource "aws_s3_object" "lambda_code" {
