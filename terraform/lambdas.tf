@@ -1,8 +1,8 @@
 data "archive_file" "lambda" {
   type        = "zip"
   output_file_mode = "0666"
-  source_file = "${path.module}/../src/ingestion/utils/sql_utils.py"      #--- has to be changed
-  output_path = "${path.module}/../src/ingestion/utils/sql_utils.zip"             #--- has to be changed
+  source_file = "${var.source_file}"   #--- has to be changed
+  output_path = "${var.output_path}"          #--- has to be changed
 }
 
 # Create a lambda function

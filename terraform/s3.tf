@@ -1,9 +1,4 @@
 
-# resource "aws_s3_bucket" "ingestion_code_bucket" {
-#   bucket = "nc-team-reveries-ingestion-code"
-# }
-
-
 resource "aws_s3_bucket" "ingestion_bucket" {
   bucket = "nc-team-reveries-ingestion"
 }
@@ -11,7 +6,7 @@ resource "aws_s3_bucket" "ingestion_bucket" {
 resource "aws_s3_object" "lambda_code" {
   bucket = aws_s3_bucket.ingestion_bucket.bucket
   key = "ingestion_code/sql_utils.zip"       # ----- has to be changed 
-  source = "${path.module}/../src/ingestion/utils/sql_utils.zip"       # --- has to be changed
+  source = "${var.output_path}"       # --- has to be changed
 }
 
 

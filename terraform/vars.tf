@@ -13,6 +13,22 @@ variable "python_runtime" {
   default = "python3.11"
 }
 
+# variable "source_file" {
+#   type = string
+#   default = "${path.module}/../src/ingestion/utils/sql_utils.py" 
+# }
+
+variable "source_file" {
+  type = string
+  default = "../src/ingestion/utils/sql_utils.py" 
+}
+
+variable "output_path" {
+  type = string
+  default = "../src/ingestion/utils/sql_utils.zip"
+}
+
+
 data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
