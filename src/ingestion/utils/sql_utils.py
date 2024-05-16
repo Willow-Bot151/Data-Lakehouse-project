@@ -1,4 +1,4 @@
-from src.ingestion.utils.connection import connect_to_db
+from ingestion.utils.test_zip.connection import connect_to_db
 from pg8000.native import identifier
 
 

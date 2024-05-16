@@ -1,5 +1,5 @@
 from pg8000.native import Connection
-from src.ingestion.utils.config import *
+from config import *
 
 def connect_to_db():
     return Connection(

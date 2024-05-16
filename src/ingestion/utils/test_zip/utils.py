@@ -10,7 +10,7 @@ def get_current_timestamp():
     s3_client = boto3.client("s3")
     
     response = s3_client.get_object(
-            Bucket="ldcm-python-test",
+            Bucket="nc-team-reveries-ingestion",
             Key="timestamp"
     )
     body = response['Body'].read()
@@ -53,7 +53,7 @@ def put_object_in_bucket(table, put_table):
                 
                 s3_client.put_object(
                     Body=json.dumps(str(put_table)),
-                    Bucket="ldcm-python-test",
+                    Bucket="nc-team-reveries-ingestion",
                     Key=f"{table}/--{date_time}--{table}-data"
                 )
             
@@ -61,7 +61,7 @@ def put_timestamp_in_s3(timestamp):
     s3_client = boto3.client("s3")
     dt = s3_client.put_object(
     Body=json.dumps(str(timestamp)),
-    Bucket="ldcm-python-test",
+    Bucket="nc-team-reveries-ingestion",
     Key=f"timestamp"
     )   
     return dt
@@ -71,6 +71,6 @@ def initialise_bucket_with_timestamp():
     dt = datetime.datetime(2022, 1, 1, 1, 1, 1, 111111)
     s3_client.put_object(
         Body=json.dumps(dt.isoformat()),
-        Bucket="ldcm-python-test",
+        Bucket="nc-team-reveries-ingestion",
         Key=f"timestamp"
     )

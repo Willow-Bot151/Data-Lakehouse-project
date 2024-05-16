@@ -33,4 +33,3 @@ def ingestion_lambda_handler(event, context):
     put_timestamp_in_s3(new_timestamp)
     
     close_connection(conn=conn)
-
