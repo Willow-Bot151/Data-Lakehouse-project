@@ -36,7 +36,7 @@ resource "aws_cloudwatch_metric_alarm" "ingestion_lambda_alarm" {
 }
 
 resource "aws_sns_topic" "lambda_errors" {
-    name = "lambda_handler-notify"
+    name = "lambda_handler_notify"
 }
 
 resource "aws_sns_topic_subscription" "email_lambda_error_messages_1" {
@@ -69,17 +69,6 @@ resource "aws_sns_topic_subscription" "email_lambda_error_messages_5" {
   endpoint  = "cammcburney95@gmail.com"
   topic_arn = aws_sns_topic.lambda_errors.arn
 }
-
-
-# resource "aws_sns_topic_subscription" "great_quote_notify_subscription" {
-#     protocol = "email"
-#     endpoint = "annshelly@hotmail.com"
-#     topic_arn = aws_sns_topic.great-quote-notify.arn
-# }
-
-
-
-
 
 
 
