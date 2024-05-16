@@ -6,10 +6,10 @@ resource "aws_cloudwatch_log_group" "ingestion_lambda_log_group" {
   retention_in_days = 30
 }
 
-resource "aws_cloudwatch_log_stream" "ingestion_lambda_log_stream" {
-  name           = "ingestion-lambda-log-stream"
-  log_group_name = aws_cloudwatch_log_group.ingestion_lambda_log_group.name
-}
+# resource "aws_cloudwatch_log_stream" "ingestion_lambda_log_stream" {
+#   name           = "ingestion-lambda-log-stream"
+#   log_group_name = aws_cloudwatch_log_group.ingestion_lambda_log_group.name
+# }
 
 resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_error_messages" {
   name           = "IngestionErrorFilter"
