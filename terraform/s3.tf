@@ -5,7 +5,7 @@ resource "aws_s3_bucket" "ingestion_bucket" {
 
 resource "aws_s3_object" "lambda_code" {
   bucket = aws_s3_bucket.ingestion_bucket.bucket
-  key = "ingestion_code/sql_utils.zip"       # ----- has to be changed 
+  key = "ingestion_code/python_handler.zip"       # ----- has to be changed 
   source = "${var.output_path}"       # --- has to be changed
 }
 
@@ -23,7 +23,7 @@ resource "aws_s3_bucket_notification" "ingestion_lambda_trigger" {
   bucket = aws_s3_bucket.ingestion_bucket.id
 
   lambda_function {
-    lambda_function_arn = aws_lambda_function.ingestion_lambda_handler.arn
+    lambda_function_arn = aws_lambda_function.ingestion_lambda.arn
     events              = ["s3:ObjectCreated:*"]
   }
 

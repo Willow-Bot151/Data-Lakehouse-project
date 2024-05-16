@@ -2,7 +2,7 @@
 # subject to change dependent on error messages being logged
 
 resource "aws_cloudwatch_log_group" "ingestion_lambda_log_group" {
-  name = "/aws/lambda/ingestion_lambda_handler"   # needs to change depending on location of cloudwatch logging
+  name = "/aws/lambda/ingestion_lambda"   # needs to change depending on location of cloudwatch logging
   retention_in_days = 30
 }
 
@@ -13,7 +13,7 @@ resource "aws_cloudwatch_log_group" "ingestion_lambda_log_group" {
 
 resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_error_messages" {
   name           = "IngestionErrorFilter"
-  pattern        = "ERROR"           # needs to be changed depending on error handling
+  pattern        = "ERROR"  # needs to be changed depending on error handling
   log_group_name = aws_cloudwatch_log_group.ingestion_lambda_log_group.name  # needs changing
   metric_transformation {
     name = "ErrorCount"
@@ -45,30 +45,30 @@ resource "aws_sns_topic_subscription" "email_lambda_error_messages_1" {
   topic_arn = aws_sns_topic.lambda_errors.arn
 }
 
-resource "aws_sns_topic_subscription" "email_lambda_error_messages_2" {
-  protocol  = "email"
-  endpoint  = "laxmiprasanna.immadi@gmail.com"
-  topic_arn = aws_sns_topic.lambda_errors.arn
-}
+# resource "aws_sns_topic_subscription" "email_lambda_error_messages_2" {
+#   protocol  = "email"
+#   endpoint  = "laxmiprasanna.immadi@gmail.com"
+#   topic_arn = aws_sns_topic.lambda_errors.arn
+# }
 
-resource "aws_sns_topic_subscription" "email_lambda_error_messages_3" {
-  protocol  = "email"
-  endpoint  = "lukedowney2014@gmail.com"
-  topic_arn = aws_sns_topic.lambda_errors.arn
-}
+# resource "aws_sns_topic_subscription" "email_lambda_error_messages_3" {
+#   protocol  = "email"
+#   endpoint  = "lukedowney2014@gmail.com"
+#   topic_arn = aws_sns_topic.lambda_errors.arn
+# }
 
 
-resource "aws_sns_topic_subscription" "email_lambda_error_messages_4" {
-  protocol  = "email"
-  endpoint  = "willowhart151@gmail.com"
-  topic_arn = aws_sns_topic.lambda_errors.arn
-}
+# resource "aws_sns_topic_subscription" "email_lambda_error_messages_4" {
+#   protocol  = "email"
+#   endpoint  = "willowhart151@gmail.com"
+#   topic_arn = aws_sns_topic.lambda_errors.arn
+# }
 
-resource "aws_sns_topic_subscription" "email_lambda_error_messages_5" {
-  protocol  = "email"
-  endpoint  = "cammcburney95@gmail.com"
-  topic_arn = aws_sns_topic.lambda_errors.arn
-}
+# resource "aws_sns_topic_subscription" "email_lambda_error_messages_5" {
+#   protocol  = "email"
+#   endpoint  = "cammcburney95@gmail.com"
+#   topic_arn = aws_sns_topic.lambda_errors.arn
+# }
 
 
 

@@ -1,6 +1,6 @@
 variable "lambda_name" {
   type = string
-  default = "ingestion_lambda_handler"
+  default = "ingestion_lambda"
 }
 
 variable "aws_region" {
@@ -13,19 +13,14 @@ variable "python_runtime" {
   default = "python3.11"
 }
 
-# variable "source_file" {
-#   type = string
-#   default = "${path.module}/../src/ingestion/utils/sql_utils.py" 
-# }
-
 variable "source_file" {
   type = string
-  default = "../src/ingestion/utils/sql_utils.py" 
+  default = "../src/ingestion/utils/python_handler.py" 
 }
 
 variable "output_path" {
   type = string
-  default = "../src/ingestion/utils/sql_utils.zip"
+  default = "../src/ingestion/utils/python_handler.zip"
 }
 
 

@@ -47,11 +47,11 @@ data "aws_iam_policy_document" "cw_document" {
 
   statement {
 
-    actions = [ "logs:CreateLogStream", "logs:PutLogEvents" ]
+    actions = [ "logs:CreateLogStream",  "logs:PutLogEvents" ]
 
     resources = [
       "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${var.lambda_name}:*"
-      #"arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/ingestion_lambda_handler/logs:*"
+      #"arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/ingestion_lambda/logs:*"
     ]
   }
 }
@@ -76,3 +76,40 @@ resource "aws_iam_role_policy_attachment" "lambda_cw_policy_attachment" {
     role = aws_iam_role.lambda_role.name
     policy_arn = aws_iam_policy.cw_policy.arn
 }
+
+
+
+
+# resource "aws_sns_topic_policy" "default" {
+#   arn = aws_sns_topic.lambda_errors.arn
+#   policy = data.aws_iam_policy_document.sns_topic_policy.json
+# }
+
+# data "aws_iam_policy_document" "sns_topic_policy" {
+#   policy_id = "__default_policy_ID"
+
+#   statement {
+#     actions = [
+#       "SNS:Subscribe",
+#       "SNS:SetTopicAttributes",
+#       "SNS:RemovePermission",
+#       "SNS:Receive",
+#       "SNS:Publish",
+#       "SNS:ListSubscriptionsByTopic",
+#       "SNS:GetTopicAttributes",
+#       "SNS:DeleteTopic",
+#       "SNS:AddPermission",
+#     ]
+
+#     effect = "Allow"
+
+#     principals {
+#       type        = "AWS"
+#       identifiers = ["*"]
+#     }
+
+#     resources = [
+#       aws_sns_topic.lambda_errors.arn
+#     ]
+#   }
+# }

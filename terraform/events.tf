@@ -6,5 +6,5 @@ resource "aws_cloudwatch_event_rule" "ingestion_scheduler" {
 
 resource "aws_cloudwatch_event_target" "sns" {
   rule      = aws_cloudwatch_event_rule.ingestion_scheduler.name
-  arn       = aws_lambda_function.ingestion_lambda_handler.arn
+  arn       = aws_lambda_function.ingestion_lambda.arn
 }
