@@ -1,11 +1,10 @@
-from pg8000.native import identifier, literal
 from datetime import datetime, date
 import datetime
 import boto3
 import json
 import pprint
 from pg8000.native import Connection
-
+from pg8000.native import identifier, literal
 
 def connect_to_db():
     return Connection(
@@ -26,7 +25,7 @@ def close_connection(conn):
 
 latest_timestamp = datetime.datetime(2022, 1, 1, 1, 1, 1, 111111)
 
-def ingestion_lambda_handler():
+def ingestion_lambda_handler(event, context):
     #event, context
     conn = connect_to_db()
 
@@ -68,7 +67,7 @@ def ingestion_lambda_handler():
             
             s3_client.put_object(
                 Body=json.dumps(str(individual_table)),
-                Bucket="ldcm-python-test",
+                Bucket="nc-team-reveries-ingestion",
                 Key=f"{table}/{date_time}-{table}-data"
             )
 
@@ -86,13 +85,3 @@ def ingestion_lambda_handler():
     
     
     return result
-
-#ingestion_lambda_handler()
-#ingestion_lambda_handler()
-#pprint.pp(ingestion_lambda_handler())
-
-
-        
-# print(datetime.now())
-# ingestion_lambda_handler()
-# print(datetime.now())

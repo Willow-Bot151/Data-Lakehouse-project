@@ -1,6 +1,9 @@
 
 resource "aws_s3_bucket" "ingestion_bucket" {
   bucket = "nc-team-reveries-ingestion"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_s3_object" "lambda_code" {
