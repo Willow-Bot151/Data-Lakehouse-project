@@ -1,8 +1,8 @@
 from connection import connect_to_db, close_connection
 
 from utils import put_object_in_bucket, query_updated_table_information, get_datestamp_from_table, get_current_timestamp, put_timestamp_in_s3
-
-def ingestion_lambda_handler(event, context):
+#event, context
+def ingestion_lambda_handler():
 
     conn = connect_to_db()
 
@@ -33,3 +33,7 @@ def ingestion_lambda_handler(event, context):
     put_timestamp_in_s3(new_timestamp)
     
     close_connection(conn=conn)
+
+
+test=ingestion_lambda_handler()
+print(test)
