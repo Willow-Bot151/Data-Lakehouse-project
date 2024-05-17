@@ -15,15 +15,16 @@ variable "python_runtime" {
 
 variable "source_file" {
   type = string
-  default = "../src/ingestion/utils/python_handler.py" 
+  default = "../src/ingestion/utils/ingestion_lambda_handler.py" 
 }
 
 variable "output_path" {
   type = string
-  default = "../src/ingestion/utils/python_handler.zip"
+  default = "../src/ingestion/utils/ingestion_lambda_handler.zip"
 }
 
 
 data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
+
