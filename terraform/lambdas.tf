@@ -18,15 +18,7 @@ resource "aws_lambda_function" "ingestion_lambda" {
     timeout = 60                               # --- might need to be changed for first ingestion pull of all tables
     # layers = [aws_lambda_layer_version.ingestion_layer.arn, aws_lambda_layer_version.requests_layer.arn]
     # #layers = [aws_lambda_layer_version.ingestion_layer.arn]
-    environment {
-    variables = {
-      PG_USER="project_team_3"
-      PG_PASSWORD="pT8zDDjhPigF5xx7"
-      PG_DATABASE="totesys"
-      PG_HOST="nc-data-eng-totesys-production.chpsczt8h1nu.eu-west-2.rds.amazonaws.com"
-      PG_PORT=5432
-    }
-    }
+    
 }
 
 
