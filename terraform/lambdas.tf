@@ -18,7 +18,7 @@ resource "aws_lambda_function" "ingestion_lambda" {
     timeout = 60                               # --- might need to be changed for first ingestion pull of all tables
     # layers = [aws_lambda_layer_version.ingestion_layer.arn, aws_lambda_layer_version.requests_layer.arn]
     # #layers = [aws_lambda_layer_version.ingestion_layer.arn]
-    
+    #source code hash, implement for constant update :)
 }
 
 
