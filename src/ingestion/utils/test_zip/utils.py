@@ -7,28 +7,55 @@ import os
 import pprint
 
 def get_current_timestamp():
-    s3_client = boto3.client("s3")
+    # s3_client = boto3.client("s3")
     
-    response = s3_client.get_object(
-            Bucket="nc-team-reveries-ingestion",
-            Key="timestamp"
-    )
-    body = response['Body'].read()
-    dt_str = json.loads(body.decode('utf-8'))
-    dt = datetime.datetime.fromisoformat(dt_str)
-    return dt
-
+    # response = s3_client.get_object(
+    #         Bucket="nc-team-reveries-ingestion",
+    #         Key="timestamp"
+    # )
+    # body = response['Body'].read()
+    # dt_str = json.loads(body.decode('utf-8'))
+    # dt = datetime.datetime.fromisoformat(dt_str)
+    # return dt
+    try:
+        s3_client = boto3.client("s3")
+        response = s3_client.get_object(
+                Bucket="ldcm-python-test",
+                Key="timestamp"
+        )
+        print(response)
+        body = response['Body'].read()
+        dt_str = json.loads(body.decode('utf-8'))
+        dt = datetime.datetime.fromisoformat(dt_str)
+        return dt
+    except Exception as e:
+    # Handle any exceptions that occur during the operation
+        print("An error occurred:", e)
+        return None
 
 def query_updated_table_information(conn, table, dt):
-    query = f"""SELECT * 
-                FROM {identifier(table)} 
-                WHERE last_updated > {literal(dt)}
-                ORDER BY last_updated ASC
-                LIMIT 10;"""
-    result = conn.run(query)
-    columns = [col["name"]for col in conn.columns]
-    output_table = put_into_individual_table(table, result, columns)
-    return output_table        
+    # query = f"""SELECT * 
+    #             FROM {identifier(table)} 
+    #             WHERE last_updated > {literal(dt)}
+    #             ORDER BY last_updated ASC
+    #             LIMIT 10;"""
+    # result = conn.run(query)
+    # columns = [col["name"]for col in conn.columns]
+    # output_table = put_into_individual_table(table, result, columns)
+    # return output_table    
+    try:
+        query = f"""SELECT *
+                    FROM {identifier(table)}
+                    WHERE last_updated > {literal(dt)}
+                    ORDER BY last_updated ASC
+                    LIMIT 10;"""
+        result = conn.run(query)
+        columns = [col["name"] for col in conn.columns]
+        output_table = put_into_individual_table(table, result, columns)
+        return output_table
+    except Exception as e:
+        print("An error occurred in DB query:", e)
+        return None    
             
                 
 def put_into_individual_table(table, result, columns):
