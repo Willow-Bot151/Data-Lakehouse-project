@@ -1,7 +1,6 @@
 from connection import connect_to_db, close_connection
 
-from utils import put_object_in_bucket, query_updated_table_information, get_datestamp_from_table, get_current_timestamp, put_timestamp_in_s3
-
+from utils import init_s3_client, put_object_in_bucket, query_updated_table_information, get_datestamp_from_table, get_current_timestamp, put_timestamp_in_s3
 def ingestion_lambda_handler(event, context):
 
     conn = connect_to_db()
@@ -19,17 +18,25 @@ def ingestion_lambda_handler(event, context):
             'payment',
             'transaction'
             ]
+    s3_client = init_s3_client()
+    dt = get_current_timestamp(s3_client)
+    latest_timestamp = get_current_timestamp(s3_client)
     
-    dt = get_current_timestamp()
 
     for table in table_names:
         individual_table = query_updated_table_information(conn, table, dt)
-        put_object_in_bucket(table, individual_table)  
-        if table == 'sales_order':
-            table_to_get_timestamp_from = individual_table 
         
-    new_timestamp = get_datestamp_from_table(table_to_get_timestamp_from)
+        if len(individual_table[table]) > 0:
+            put_object_in_bucket(table, individual_table, s3_client, 'nc-team-reveries-ingestion') 
+            
+        if len(individual_table[table]) > 0:
+            potential_timestamp = get_datestamp_from_table(individual_table, table)
+            if potential_timestamp > latest_timestamp:
+                latest_timestamp = potential_timestamp
+                
+        
     
-    put_timestamp_in_s3(new_timestamp)
+        
+    put_timestamp_in_s3(latest_timestamp, s3_client)
     
     close_connection(conn=conn)

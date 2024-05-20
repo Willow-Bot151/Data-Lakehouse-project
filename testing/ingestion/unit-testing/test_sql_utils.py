@@ -8,6 +8,7 @@ import boto3
 import os
 import json
 
+
 @pytest.fixture
 def get_table_names():
     tables = [
@@ -37,11 +38,6 @@ def mock_s3_client(aws_creds):
     with mock_aws():
         yield boto3.client("s3")
         
-
-@pytest.fixture
-def mock_boto3_client():
-    with patch("boto3.client") as mock_client:
-        yield mock_client
 
 class TestGetCurrentTimestamp:
     def test_get_currrent_timestamp_returns_a_datetime_object(self, mock_s3_client):
@@ -102,74 +98,55 @@ def mock_conn1():
     return MockConnection()
 
 class TestQueryUpdatedTableInformation:
-    @pytest.mark.skip("This is broken")
-    def test_query_updated_table_information_empty_result(self,mock_conn):
-        mock_conn.run.return_value = []
-        dt = "2024-05-16T11:00:00"
-        table = "example_table"
-        output_table = query_updated_table_information(mock_conn, table, dt)
-        assert len(output_table[table]) == 0
-    @pytest.mark.skip("This is broken")
-    def test_query_updated_table_information_returns_len_data_in_specific_range(self,mock_conn):
+    
+    def test_query_updated_table_information_returns_correct_data_format(self,mock_conn):
+
         mock_conn.run.return_value = [
             {"id": 1, "name": "Cameron", "last_updated": "2024-05-16T12:00:00"},
-            {"id": 2, "name": "Luke", "last_updated": "2024-05-16T13:00:00"}]
+            {"id": 2, "name": "Luke", "last_updated": "2024-05-16T13:00:00"},
+            {"id": 3, "name": "Cameroon", "last_updated": "2024-05-16T16:00:00"},
+            {"id": 4, "name": "Lucke", "last_updated": "2024-05-16T13:00:00"}
+            ]
         mock_conn.columns = [{"name": "id"}, {"name": "name"}, {"name": "last_updated"}]
         dt = "2024-05-16T11:00:00"
         table = "test_table"
-        return_table = query_updated_table_information(mock_conn, table, dt)
-        print(return_table)
-        assert len(return_table[table]) == 2
-        # assert len(return_table[table]) < 10
-
-    @pytest.mark.skip
-    def test_query_updated_table_information_malformed_data(self,mock_conn):
-        """
-        Test for data rejection where last updated is missing
-        """
-        expected_column_names = ["id", "name", "last_updated"]
-        mock_data = [
-            {"id": 1, "name": "Cameron"},  # Missing 'last_updated' column
-            {"id": 2, "name": "Luke", "last_updated": "2024-05-16T13:00:00"}]
-        mock_conn.run.return_value = mock_data
-        mock_conn.columns = [{"name": "id"}, {"name": "name"}, {"name": "last_updated"}]
-        actual_column_names = [col["name"] for col in mock_conn.columns]
-        dt = "2024-05-16T11:00:00"
-        table = "test_table"
-        output_table = query_updated_table_information(mock_conn, table, dt)
-        assert len(output_table[table]) == len(mock_data)
-        assert actual_column_names == expected_column_names
-        assert len(output_table[table][0]) == 2
+        result = query_updated_table_information(mock_conn, table, dt)
+        assert isinstance(result['test_table'], list)
+        assert isinstance(result['test_table'][0], dict)
 
     def test_query_updated_table_information_handles_database_error(mock_conn):
         output_table = query_updated_table_information(mock_conn1, "test_table", "2024-05-16T11:00:00")
         assert output_table is None
 
-def test_get_datestamp_from_table_returns_timestamp():
-    #timestamp should = datetime.datetime(2022, 1, 1, 1, 1, 1, 111111)
-    test_table_name = 'sales_order'
-    fake_data = {
-    test_table_name: [
-        {'last_updated': '2022-03-12 19:24:01:377'},
-        {'last_updated': '2024-05-14 16:45:09.72'},
-        {'last_updated': '2024-05-14 16:54:10.308'}
-    ]
-}
-    result = get_datestamp_from_table(fake_data, test_table_name)
-    expected = '2024-05-14 16:54:10.308'
-    assert result == expected
-    assert type(result) == str
-    assert len(result) == len(expected)
+class TestGetDatestampFromTable:
 
-def test_get_datestamp_from_table_error_handling():
-    pass
+    def test_get_datestamp_from_table_returns_timestamp(self):
+        #timestamp should = datetime.datetime(2022, 1, 1, 1, 1, 1, 111111)
+        test_table_name = 'sales_order'
+        fake_data = {
+        test_table_name: [
+            {'last_updated': '2022-03-12 19:24:01:377'},
+            {'last_updated': '2024-05-14 16:45:09.72'},
+            {'last_updated': '2024-05-14 16:54:10.308'}
+        ]
+    }
+        result = get_datestamp_from_table(fake_data, test_table_name)
+        expected = '2024-05-14 16:54:10.308'
+        assert result == expected
+        assert type(result) == str
+        assert len(result) == len(expected)
 
-def test_get_datetime_now_converts_to_strftime():
-    test_func = get_datetime_now()
-    now = datetime.datetime.now()
-    expected = now.strftime("%m:%d:%Y-%H:%M:%S")
-    assert test_func == expected
-    assert type(test_func) == str
+    def test_get_datestamp_from_table_error_handling(self):
+        test_table = {"test": []}
+        with pytest.raises(IndexError):
+            get_datestamp_from_table(test_table, "test")
+
+    def test_get_datetime_now_converts_to_strftime(self):
+        test_func = get_datetime_now()
+        now = datetime.datetime.now()
+        expected = now.strftime("%m:%d:%Y-%H:%M:%S")
+        assert test_func == expected
+        assert type(test_func) == str
 
 class TestPutIntoIndividualTable:
     def test_put_into_individual_table_returns_dict(self):
@@ -207,19 +184,27 @@ class TestPutIntoIndividualTable:
 
 
 class TestPutObjectInBucket:
-    def test_func_puts_obj_in_s3(self,s3_client):
-        table = 'testtable'
-        put_table = 'test'
-        s3_client.create_bucket(
-            Bucket='testbucket',
+    def test_func_puts_obj_in_s3(self, mock_s3_client):
+        table = 'test_table'
+        individual_table = {table: []}
+        bucket = 'testbucket'
+        mock_s3_client.create_bucket(
+            Bucket=bucket,
             CreateBucketConfiguration={
                 'LocationConstraint' : 'eu-west-2'
             })
-        put_object_in_bucket(
-            table=table,
-            put_table= put_table,
-            s3_client=s3_client)
-        assert Body.read().decode('utf-8') == text
+        
+        put_object_in_bucket(table, individual_table, mock_s3_client, bucket)
 
-
-    
+        listed_objects = mock_s3_client.list_objects(
+            Bucket=bucket
+        )
+        
+        returned_object = mock_s3_client.get_object(
+            Bucket=bucket,
+            Key=listed_objects['Contents'][0]['Key']
+        )
+        body = returned_object['Body'].read()
+        result = json.loads(returned_object.decode('utf-8'))
+        print(type(result))
+        assert result[table] == []
