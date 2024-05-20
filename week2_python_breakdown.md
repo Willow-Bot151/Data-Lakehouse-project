@@ -1,22 +1,24 @@
 <h2> Breakdown of python code behaviours for section between ingestion and processing buckets</h2>
 
-(1) **Function** to read files from a given table name
-    * take a table name as a parameter
-    * read json format into pandas dataframe (function 2) 
-    * AWS wrangler or boto3 for listing and reading into one place
-    * Be able to read files that were written between specific timestamps (function 3)
+**Function to read files from a given table name**
+- take a table name as a parameter
+- read json format into pandas dataframe (function 2) 
+- AWS wrangler or boto3 for listing and reading into one place
+- Be able to read files that were written between specific timestamps (function 3)
     
 
-    (2) **Function** Read json format into pandas
+ **Function to read json format into pandas**
+  - takes json format and converts to dataframe
 
-    (3) **Function** to read files between two timestamps
-        - list all files between two timestamps for a given folder/key
-        - read into a pandas dataframe
+**Function to read files between two timestamps**
+- list all files between two timestamps for a given folder/key
+- read into a pandas dataframe
 
 
-** function write to s3** 
+**function write to s3** 
+ - write formatted parquet table to processed bucket
 
-**Dimension Functions**
+<h3>>Dimension Functions</h3>
 
 (1) **dim_staff function**
 
