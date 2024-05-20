@@ -1,24 +1,26 @@
-# data "archive_file" "lambda" {
-#   type        = "zip"
+# data "archive_file" "dependancies" {
+#   type = "zip"
 #   output_file_mode = "0666"
-#   source_dir = "../src/ingestion/utils/test_zip"   #--- has to be changed
-#   output_path = "ingestion_lambda_handler.zip"          #--- has to be changed
+#   source_dir = "../src/ingestion/utils/test_zip/"
+#   output_path = "../src/ingestion/utils/test_zip/my_venv/lib/python3.11/site-packages/my_deployment_package.zip"
 # }
 
+data "archive_file" "ingestion_lambda_file" {
+  type        = "zip"
+  output_file_mode = "0666"
+  source_dir = "../src/ingestion/utils/test_zip"   
+  output_path = "../terraform/deploy.zip"          
+}
 
-# Create a lambda function
 resource "aws_lambda_function" "ingestion_lambda" {
     function_name = "ingestion_lambda"
-    filename = "my_deployment_package.zip"
-    # s3_bucket = aws_s3_object.lambda_code.bucket
-    # s3_key = aws_s3_object.lambda_code.key    #--- has to be changed
+    filename = "deploy.zip"
     role = aws_iam_role.lambda_role.arn
-    handler = "ingestion_lambda_handler.ingestion_lambda_handler"       #--- has to be changed
+    handler = "ingestion_lambda_handler.ingestion_lambda_handler"       
     runtime = var.python_runtime        
     timeout = 60                               # --- might need to be changed for first ingestion pull of all tables
-    # layers = [aws_lambda_layer_version.ingestion_layer.arn, aws_lambda_layer_version.requests_layer.arn]
-    # #layers = [aws_lambda_layer_version.ingestion_layer.arn]
-    #source code hash, implement for constant update :)
+    source_code_hash = data.archive_file.ingestion_lambda_file.output_base64sha256
+    layers = [aws_lambda_layer_version.dependancies_layer.arn]
 }
 
 
@@ -39,12 +41,11 @@ resource "aws_lambda_permission" "allow_eventbridge" {
   source_account = data.aws_caller_identity.current.account_id
 }
 
-# resource "aws_lambda_layer_version" "ingestion_layer" {
-#   layer_name = "ingestion_layer"
-#   compatible_runtimes = [var.python_runtime]
-#   s3_bucket = aws_s3_bucket.ingestion_bucket.bucket
-#   s3_key = "ingestion_code/python_handler.zip"  
-# }
+resource "aws_lambda_layer_version" "dependancies_layer" {
+  layer_name = "dependancies_layer"
+  compatible_runtimes = [var.python_runtime]
+  filename = "../python.zip"
+}
 
 resource "aws_lambda_function_event_invoke_config" "lambda_invoke_config" {
   function_name                = aws_lambda_function.ingestion_lambda.function_name
