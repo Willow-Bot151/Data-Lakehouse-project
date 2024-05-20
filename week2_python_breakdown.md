@@ -1,6 +1,6 @@
 <h2> Breakdown of python code behaviours for section between ingestion and processing buckets</h2>
 
-**Read files from S3 buckeet -S3_reader.py**
+**Read files from S3 bucket -S3_reader.py**
 - take a table name as a parameter
 - read json format into pandas dataframe (calls function below)
 - AWS wrangler or boto3 for listing and reading into one place
