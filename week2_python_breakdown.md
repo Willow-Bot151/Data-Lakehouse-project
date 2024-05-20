@@ -1,26 +1,31 @@
 <h2> Breakdown of python code behaviours for section between ingestion and processing buckets</h2>
 
-**Function to read files from a given table name**
+**Read files from S3 buckeet -S3_reader.py**
 - take a table name as a parameter
-- read json format into pandas dataframe (function 2) 
+- read json format into pandas dataframe (calls function below)
 - AWS wrangler or boto3 for listing and reading into one place
 - Be able to read files that were written between specific timestamps (function 3)
-    
 
- **Function to read json format into pandas dataframe**
+
+**Function to write last date to parameter store - parameter_store_writer.py**
+
+**Function to read last date wrtten to parameter store - parameter_store_reader.py**
+
+ **Function to read json format into pandas dataframe - json_to_pd.py**
   - takes json format and converts to dataframe
 
-**Function to read files between two timestamps**
+
+**Function to read files between two timestamps - timestamp_range_reader.py**
 - list all files between two timestamps for a given folder/key
 - read into a pandas dataframe
 
-
-**function write to s3** 
+**function write to s3  - s3_writer.py** 
  - write formatted parquet table to processed bucket
 
-<h3>>Dimension Functions</h3>
 
-(1) **dim_staff function**
+<h3>Dimension Functions</h3>
+
+(1) **dim_staff function   - dim_staff.py**
 
     Final Columns needed :  
         staff_id         Primary Key to be created
@@ -38,7 +43,7 @@
     - output columns as above to parquet
 
 
-(2) **dim_currency function**
+(2) **dim_currency function -dim_currency.py**
 
     final columns needed:  
         currency_id       Primary key to be created
@@ -54,7 +59,7 @@
     - output columns to parquet
 
 
-(3) **dim_counterparty function**
+(3) **dim_counterparty function - dim_counterparty.py**
 
     final columns needed:
         counterparty_id                     primary key to be created
@@ -75,7 +80,7 @@
     - write to S3 processed bucket
 
 
-(4) **dim_design function**
+(4) **dim_design function   - dim_design.py**
     final columns needed:
         design_id               primary key to be added
         design_name             design table
@@ -88,7 +93,7 @@
     - write to parquet
     - write to s3
 
-(5) **dim_location function**
+(5) **dim_location function  - dim_location.py**
 
     final columns needed:
         location_id             primary key to be added
@@ -106,7 +111,7 @@
     - write to parquet
     - write to S3
 
-(6) **dim_date function**
+(6) **dim_date function  - dim_date.py**
 
     final columns needed:
         date_id             primary key to be added?
@@ -128,7 +133,10 @@
     - write to parquet
     - write to S3
 
-(7)  **fact_sales_order**
+
+<h3>Fact Function </h3>
+
+**fact_sales_order  - fact_sales.py**
 
     final_columns needed:
 
@@ -147,3 +155,9 @@
         agreed_payment_date from sales order                                                       joins on date_id
         agreed_delivery_date from sales order table                                                joins on date_id
         agreed_delievery_location_id    from dim_location                                          joins on location_id
+
+
+
+**Lambda handler to run all of the above code  - processed_lambda_handler.py**
+
+- loops over all MVP table functions to write parquret to processed bucket
