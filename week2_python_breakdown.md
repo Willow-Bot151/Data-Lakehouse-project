@@ -7,7 +7,7 @@
 - Be able to read files that were written between specific timestamps (function 3)
     
 
- **Function to read json format into pandas**
+ **Function to read json format into pandas dataframe**
   - takes json format and converts to dataframe
 
 **Function to read files between two timestamps**
