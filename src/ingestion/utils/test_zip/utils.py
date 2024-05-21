@@ -31,7 +31,8 @@ def query_updated_table_information(conn, table, dt):
         query = f"""SELECT *
                     FROM {identifier(table)}
                     WHERE last_updated > {literal(dt)}
-                    ORDER BY last_updated ASC;"""
+                    ORDER BY last_updated ASC
+                    LIMIT 2;"""
         result = conn.run(query)
         
         columns = [col["name"] for col in conn.columns]
@@ -63,8 +64,6 @@ def get_datetime_now():
 
 def put_object_in_bucket(table, put_table, s3_client, bucket_name):
                 date_time = get_datetime_now()
-                silly = json.dumps(str(put_table))
-                print(silly)
                 s3_client.put_object(
                     Body=json.dumps(str(put_table)),
                     Bucket=bucket_name,
