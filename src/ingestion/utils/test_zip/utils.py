@@ -1,7 +1,6 @@
 import json
 import datetime
 import botocore.session
-import json
 from pg8000.native import identifier, literal
 from decimal import Decimal
 
