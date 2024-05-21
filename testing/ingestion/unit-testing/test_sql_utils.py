@@ -217,9 +217,4 @@ class TestPutObjectInBucket:
         
         eval_str_to_dict = eval(result)
 
-        
-
-
-        
-
         assert eval_str_to_dict == individual_table
