@@ -25,7 +25,7 @@ def initialise_bucket_with_timestamp():
     dt = datetime.datetime(2022, 1, 1, 1, 1, 1, 111111)
     s3_client.put_object(
         Body=json.dumps(dt.isoformat()),
-        Bucket="ldcm-python-test",
+        Bucket="nc-team-reveries-ingestion",
         Key=f"timestamp"
     )
 

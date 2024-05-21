@@ -56,6 +56,14 @@ data "aws_iam_policy_document" "cw_document" {
   }
 }
 
+data "aws_iam_policy_document" "ingestion_secrets_policy_document" {
+  statement {
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = ["*"]
+  }
+  
+}
+
 resource "aws_iam_policy" "s3_policy" {
     name_prefix = "s3-policy-${var.lambda_name}"
     policy = data.aws_iam_policy_document.s3_document.json
@@ -65,6 +73,11 @@ resource "aws_iam_policy" "s3_policy" {
 resource "aws_iam_policy" "cw_policy" {
     name_prefix = "cw-policy-${var.lambda_name}"
     policy = data.aws_iam_policy_document.cw_document.json
+}
+
+resource "aws_iam_policy" "secrets_policy" {
+    name_prefix = "secrets-policy-${var.lambda_name}"
+    policy = data.aws_iam_policy_document.ingestion_secrets_policy_document.json
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_s3_policy_attachment" {
@@ -77,6 +90,15 @@ resource "aws_iam_role_policy_attachment" "lambda_cw_policy_attachment" {
     policy_arn = aws_iam_policy.cw_policy.arn
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_secrets_policy_attachment" {
+    role = aws_iam_role.lambda_role.name
+    policy_arn = aws_iam_policy.secrets_policy.arn
+}
+
+
+resource "aws_secretsmanager_secret" "get_aws_secrets_ingestion" {
+  name = "aws_secrets_ingestion"
+}
 
 
 

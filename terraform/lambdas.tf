@@ -1,9 +1,9 @@
-# data "archive_file" "dependancies" {
-#   type = "zip"
-#   output_file_mode = "0666"
-#   source_dir = "../src/ingestion/utils/test_zip/"
-#   output_path = "../src/ingestion/utils/test_zip/my_venv/lib/python3.11/site-packages/my_deployment_package.zip"
-# }
+data "archive_file" "dependancies" {
+  type = "zip"
+  output_file_mode = "0666"
+  source_dir = "../layer"
+  output_path = "../python.zip"
+}
 
 data "archive_file" "ingestion_lambda_file" {
   type        = "zip"
@@ -21,6 +21,7 @@ resource "aws_lambda_function" "ingestion_lambda" {
     timeout = 60                               # --- might need to be changed for first ingestion pull of all tables
     source_code_hash = data.archive_file.ingestion_lambda_file.output_base64sha256
     layers = [aws_lambda_layer_version.dependancies_layer.arn]
+    
 }
 
 
@@ -44,6 +45,7 @@ resource "aws_lambda_permission" "allow_eventbridge" {
 resource "aws_lambda_layer_version" "dependancies_layer" {
   layer_name = "dependancies_layer"
   compatible_runtimes = [var.python_runtime]
+  compatible_architectures = ["x86_64", "arm64"]
   filename = "../python.zip"
 }
 
@@ -51,6 +53,7 @@ resource "aws_lambda_function_event_invoke_config" "lambda_invoke_config" {
   function_name                = aws_lambda_function.ingestion_lambda.function_name
   maximum_event_age_in_seconds = 60
   maximum_retry_attempts       = 0
+  qualifier     = "$LATEST"
 }
 
 
