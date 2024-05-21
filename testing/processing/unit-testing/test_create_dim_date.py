@@ -23,8 +23,12 @@ class TestDateDimensionTable:
             'quarter': 'period[Q-DEC]'
         }
         df = create_dim_date()
-        for col, data_type in expected_data_types.items():
-            assert df[col].dtype == data_type
+        for col, type in expected_data_types.items():
+            assert df[col].dtype == type
 
     def test_create_dim_date_returns_correct_df_data(self):
-        
+       result=create_dim_date()
+       assert result['day_of_week'][0] == 5
+       assert result['year'][4] == 2022
+       assert result['day_name'][868] == 'Saturday'
+       assert result['month_name'][867] == 'May'
