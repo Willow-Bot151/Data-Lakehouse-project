@@ -97,3 +97,4 @@ def convert_datetimes_and_decimals(unconverted_json):
                     elif isinstance(n, Decimal):
                         entry[m] = str(n)
     return json.dumps(unconverted_json)
+    #return unconverted_json

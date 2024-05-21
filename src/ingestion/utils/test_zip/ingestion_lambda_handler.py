@@ -28,15 +28,18 @@ def ingestion_lambda_handler(event, context):
         individual_table =convert_datetimes_and_decimals(query_updated_table_information(conn, table, dt))
         
 
-        if len(individual_table[table]) > 0:
-            put_object_in_bucket(table, individual_table, s3_client, 'nc-team-reveries-ingestion') 
+        # if len(individual_table[table]) > 0:
+        #     put_object_in_bucket(table, individual_table, s3_client, 'nc-team-reveries-ingestion') 
             
-        if len(individual_table[table]) > 0:
-            potential_timestamp = get_datestamp_from_table(individual_table, table)
-            if potential_timestamp > latest_timestamp:
-                latest_timestamp = potential_timestamp
+        # if len(individual_table[table]) > 0:
+        #     potential_timestamp = get_datestamp_from_table(individual_table, table)
+        #     if potential_timestamp > latest_timestamp:
+        #         latest_timestamp = potential_timestamp
         
-    put_timestamp_in_s3(latest_timestamp, s3_client)
+    #put_timestamp_in_s3(latest_timestamp, s3_client)
     
     close_connection(conn=conn)
 
+    return individual_table
+
+print(ingestion_lambda_handler({}, []))

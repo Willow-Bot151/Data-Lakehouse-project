@@ -17,7 +17,7 @@ def make_bucket_for_testing():
         }
     )
 
-# make_bucket_for_testing()
+#make_bucket_for_testing()
 # delete_bucket()
 
 def initialise_bucket_with_timestamp():
