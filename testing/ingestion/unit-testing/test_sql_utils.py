@@ -7,7 +7,8 @@ from moto import mock_aws
 import boto3
 import os
 import json
-
+import datetime
+from decimal import Decimal
 
 @pytest.fixture
 def get_table_names():
@@ -186,7 +187,9 @@ class TestPutIntoIndividualTable:
 class TestPutObjectInBucket:
     def test_func_puts_obj_in_s3(self, mock_s3_client):
         table = 'test_table'
-        individual_table = {table: []}
+        time = datetime.datetime(2022, 1, 1, 1, 1, 1, 1)
+        test_deci = Decimal(3.14)
+        individual_table = {table: [{"tom:": "cat"},{"tom:": "cat"}, {"date": time}, {"num", test_deci}]}
         bucket = 'testbucket'
         mock_s3_client.create_bucket(
             Bucket=bucket,
@@ -204,7 +207,19 @@ class TestPutObjectInBucket:
             Bucket=bucket,
             Key=listed_objects['Contents'][0]['Key']
         )
+        returned_object2 = mock_s3_client.get_object(
+            Bucket=bucket,
+            Key=listed_objects
+        )
         body = returned_object['Body'].read()
-        result = json.loads(returned_object.decode('utf-8'))
-        print(type(result))
-        assert result[table] == []
+        
+        result = json.loads(body.decode('utf-8'))
+        
+        eval_str_to_dict = eval(result)
+
+        
+
+
+        
+
+        assert eval_str_to_dict == individual_table
