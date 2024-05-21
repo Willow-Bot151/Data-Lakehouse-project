@@ -95,7 +95,6 @@ resource "aws_iam_role_policy_attachment" "lambda_secrets_policy_attachment" {
     policy_arn = aws_iam_policy.secrets_policy.arn
 }
 
-
 resource "aws_secretsmanager_secret" "get_aws_secrets_ingestion" {
   name = "aws_secrets_ingestion"
 }
