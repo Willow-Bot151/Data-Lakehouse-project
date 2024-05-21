@@ -1,3 +1,4 @@
+
 from botocore.exceptions import ClientError
 from botocore.session import get_session
 import json
@@ -8,6 +9,7 @@ def connect_to_db():
     session = get_session()
     client = session.create_client(
         'secretsmanager',
+
         region_name=region_name
     )
     try:
@@ -21,10 +23,12 @@ def connect_to_db():
         database = secret_value['dbname']
         host = secret_value['host']
         port = secret_value['port']
+
         return Connection(username, password=password, database=database, host=host, port=port)
     except ClientError as e:
          raise ValueError('No connection to DB returned')
     
+
 
 def close_connection(conn):
     conn.close()

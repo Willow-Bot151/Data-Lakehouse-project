@@ -2,6 +2,7 @@ import json
 import datetime
 import botocore.session
 from pg8000.native import identifier, literal
+from decimal import Decimal
 
 def init_s3_client():
     session = botocore.session.get_session()
@@ -64,7 +65,8 @@ def get_datetime_now():
 def put_object_in_bucket(table, put_table, s3_client, bucket_name):
                 date_time = get_datetime_now()
                 s3_client.put_object(
-                    Body=json.dumps(str(put_table)),
+                    Body=json.dumps(put_table),
+                    #Body=json.dumps(str(put_table)),                    
                     Bucket=bucket_name,
                     Key=f"{table}/--{date_time}--{table}-data"
                 )
@@ -84,4 +86,14 @@ def initialise_bucket_with_timestamp(s3_client):
         Bucket="nc-team-reveries-ingestion",
         Key=f"timestamp"
     )
-    
+
+def convert_datetimes_and_decimals(unconverted_json):
+
+    for k, v in unconverted_json.items():
+         for entry in v:
+               for m,n in entry.items():
+                    if isinstance(n, datetime.datetime):
+                        entry[m] = n.isoformat()
+                    elif isinstance(n, Decimal):
+                        entry[m] = str(n)
+    return json.dumps(unconverted_json)
