@@ -3,7 +3,7 @@ name: ingestion_workflow
 on:
   push:
     branches:
-      - main
+      - yml-main-testing
 
 jobs:
   run-tests: 
@@ -25,4 +25,3 @@ jobs:
       - name: Run Tests
         run: make run-checks
 
-        
