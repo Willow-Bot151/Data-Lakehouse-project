@@ -3,6 +3,7 @@ from connection import connect_to_db, close_connection
 from utils import init_s3_client, put_object_in_bucket, query_updated_table_information, get_datestamp_from_table, get_current_timestamp, put_timestamp_in_s3, convert_datetimes_and_decimals
 def ingestion_lambda_handler(event, context):
 
+
     conn = connect_to_db()
 
     table_names = [
@@ -38,7 +39,4 @@ def ingestion_lambda_handler(event, context):
     put_timestamp_in_s3(latest_timestamp, s3_client)
     
     close_connection(conn=conn)
-    
-event = {}
-context = []
-ingestion_lambda_handler(event, context)
+
