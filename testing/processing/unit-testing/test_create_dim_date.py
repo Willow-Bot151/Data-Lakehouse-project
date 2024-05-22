@@ -40,13 +40,13 @@ class TestDateDimensionTable:
             'year': [2022],
             'month': [1],
             'day': [1],
-            'day_of_week': [5],  # 0=Monday, 6=Sunday, so 5=Saturday
+            'day_of_week': [5],
             'day_name': ['Saturday'],
             'month_name': ['January'],
             'quarter': [pd.Period('2022Q1', freq='Q')]
         }
         expected_row = pd.DataFrame(data)
         print(expected_row)
+
         result=create_dim_date()
-        print(result.iloc[0])
         assert result.iloc[0] == expected_row
