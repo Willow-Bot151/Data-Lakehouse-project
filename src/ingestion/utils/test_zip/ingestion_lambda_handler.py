@@ -11,12 +11,18 @@ from utils import (
 )
 import logging
 from botocore.exceptions import ClientError
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
+
+
 def ingestion_lambda_handler(event, context):
     logger.info("Ingestion process beginning")
-    conn = connect_to_db()
-    logger.error('-!ERROR!- No connection to DB returned')
+    try:
+        conn = connect_to_db()
+    except ClientError as e:
+        logger.error("-!ERROR!- No connection to DB returned")
+        raise e("-!ERROR!- No connection to DB returned")
     table_names = [
         "sales_order",
         "design",
@@ -32,11 +38,13 @@ def ingestion_lambda_handler(event, context):
     ]
     s3_client = init_s3_client()
     logger.error("-!ERROR!- S3 client failed")
-    
+
     dt = get_current_timestamp(s3_client)
     latest_timestamp = get_current_timestamp(s3_client)
-    logger.error("""-!ERROR!- An error occured accessing the timestamp from s3 bucket. 
-                        Please check that there is a timestamp and it's format is correct""")
+    logger.error(
+        """-!ERROR!- An error occured accessing the timestamp from s3 bucket. 
+                        Please check that there is a timestamp and it's format is correct"""
+    )
 
     for table in table_names:
         individual_table = convert_datetimes_and_decimals(
@@ -48,11 +56,10 @@ def ingestion_lambda_handler(event, context):
                 table, individual_table, s3_client, "nc-team-reveries-ingestion"
             )
             logger.error("-!ERROR!- Failed to put object in bucket")
-        
-        
+
         if len(individual_table[table]) > 0:
             potential_timestamp = get_datestamp_from_table(individual_table, table)
-            dt_potential_timestamp = datetime.fromisoformat(potential_timestamp) 
+            dt_potential_timestamp = datetime.fromisoformat(potential_timestamp)
             if dt_potential_timestamp > latest_timestamp:
                 latest_timestamp = dt_potential_timestamp
                 logger.error("-!ERROR!- couldn't retrieve datestamp from table")
