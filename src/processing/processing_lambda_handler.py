@@ -9,3 +9,4 @@ ingestion_table_names = [
         'address',
         'department'
         ]
+
