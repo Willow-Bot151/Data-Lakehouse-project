@@ -52,3 +52,4 @@ def ingestion_lambda_handler(event, context):
     put_timestamp_in_s3(latest_timestamp, s3_client)
 
     close_connection(conn=conn)
+

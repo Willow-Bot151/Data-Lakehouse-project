@@ -17,10 +17,6 @@ def make_bucket_for_testing():
     )
 
 
-# make_bucket_for_testing()
-# delete_bucket()
-
-
 def initialise_bucket_with_timestamp():
     s3_client = boto3.client("s3")
     dt = datetime.datetime(2022, 1, 1, 1, 1, 1, 111111)
