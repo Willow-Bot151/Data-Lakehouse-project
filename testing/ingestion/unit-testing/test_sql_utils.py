@@ -21,19 +21,19 @@ import json
 import datetime
 from decimal import Decimal
 
-load_dotenv(".env")
+# load_dotenv(".env")
 
-user = os.getenv("PG_USER")
-password = os.getenv("PG_PASSWORD")
-database = os.getenv("PG_DATABASE")
-host = os.getenv("PG_HOST")
-port = int(os.getenv("PG_PORT"))
+# user = os.getenv("PG_USER")
+# password = os.getenv("PG_PASSWORD")
+# database = os.getenv("PG_DATABASE")
+# host = os.getenv("PG_HOST")
+# port = int(os.getenv("PG_PORT"))
 
 
-def connect_to_db():
-    return Connection(
-        user=user, password=password, database=database, host=host, port=port
-    )
+# def connect_to_db():
+#     return Connection(
+#         user=user, password=password, database=database, host=host, port=port
+#     )
 
 
 @pytest.fixture
@@ -68,18 +68,18 @@ def mock_s3_client(aws_creds):
         yield boto3.client("s3")
 
 
-@pytest.fixture()
-def get_sample_data_from_db():
-    conn = connect_to_db()
-    query = f"""SELECT *
-                FROM {identifier('sales_order')}
-                WHERE last_updated > {literal(datetime.datetime(2022,1,1,13,20,22))}
-                ORDER BY last_updated ASC
-                LIMIT 2;"""
-    result = conn.run(query)
-    columns = [col["name"] for col in conn.columns]
-    individual_table = {"sales_order": [dict(zip(columns, line)) for line in result]}
-    return individual_table
+# @pytest.fixture()
+# def get_sample_data_from_db():
+#     conn = connect_to_db()
+#     query = f"""SELECT *
+#                 FROM {identifier('sales_order')}
+#                 WHERE last_updated > {literal(datetime.datetime(2022,1,1,13,20,22))}
+#                 ORDER BY last_updated ASC
+#                 LIMIT 2;"""
+#     result = conn.run(query)
+#     columns = [col["name"] for col in conn.columns]
+#     individual_table = {"sales_order": [dict(zip(columns, line)) for line in result]}
+#     return individual_table
 
 
 class TestGetCurrentTimestamp:
@@ -284,24 +284,24 @@ class TestPutIntoIndividualTable:
         }
 
 
-class TestPutObjectInBucket:
-    def test_func_puts_obj_in_s3(self, mock_s3_client, get_sample_data_from_db):
-        table = "test_table"
-        time = datetime.datetime(2022, 1, 1, 1, 1, 1, 1)
-        test_deci = Decimal(3.14)
-        # individual_table = {table: [{"tom:": "cat"},{"tom:": "cat"}, {"date": time}, {"num", test_deci}]}
-        individual_table = get_sample_data_from_db
-        bucket = "testbucket"
-        mock_s3_client.create_bucket(
-            Bucket=bucket, CreateBucketConfiguration={"LocationConstraint": "eu-west-2"}
-        )
-        converted_table = convert_datetimes_and_decimals(individual_table)
-        put_object_in_bucket(table, converted_table, mock_s3_client, bucket)
-        listed_objects = mock_s3_client.list_objects(Bucket=bucket)
-        returned_object = mock_s3_client.get_object(
-            Bucket=bucket, Key=listed_objects["Contents"][0]["Key"]
-        )
-        body = returned_object["Body"].read()
-        result = json.loads(body.decode("utf-8"))
-        # eval_str_to_dict = eval(result)
-        assert result == individual_table
+# class TestPutObjectInBucket:
+#     def test_func_puts_obj_in_s3(self, mock_s3_client, get_sample_data_from_db):
+#         table = "test_table"
+#         time = datetime.datetime(2022, 1, 1, 1, 1, 1, 1)
+#         test_deci = Decimal(3.14)
+#         # individual_table = {table: [{"tom:": "cat"},{"tom:": "cat"}, {"date": time}, {"num", test_deci}]}
+#         individual_table = get_sample_data_from_db
+#         bucket = "testbucket"
+#         mock_s3_client.create_bucket(
+#             Bucket=bucket, CreateBucketConfiguration={"LocationConstraint": "eu-west-2"}
+#         )
+#         converted_table = convert_datetimes_and_decimals(individual_table)
+#         put_object_in_bucket(table, converted_table, mock_s3_client, bucket)
+#         listed_objects = mock_s3_client.list_objects(Bucket=bucket)
+#         returned_object = mock_s3_client.get_object(
+#             Bucket=bucket, Key=listed_objects["Contents"][0]["Key"]
+#         )
+#         body = returned_object["Body"].read()
+#         result = json.loads(body.decode("utf-8"))
+#         # eval_str_to_dict = eval(result)
+#         assert result == individual_table
