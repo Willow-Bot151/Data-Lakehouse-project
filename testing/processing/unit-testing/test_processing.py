@@ -1,4 +1,5 @@
 from src.processing.s3_file_reader import s3_file_reader_local, s3_file_reader_remote, s3_reader_many_files
+from src.processing.processing_utils import df_normalisation
 import pytest
 import json
 import boto3
@@ -83,10 +84,13 @@ class TestS3FileReaderRemote:
 
 
 class TestS3ReaderManyFiles:
+
     def test_s3_reader_many_files_returns_correct_data(self,mocker):  
         df_result = pd.read_pickle("testing/processing/transaction_df.pkl")
+        print('%%%%%%%%%%%',df_result.columns)
         mocker.patch('awswrangler.s3.read_json', return_value=df_result)
-        result_df = s3_reader_many_files()
+        table_name='transaction'
+        result_df = s3_reader_many_files(table_name)
         assert isinstance(result_df,pd.DataFrame)
         assert result_df.shape == (10,6)
         assert list(result_df.columns) == ['transaction_id', 'transaction_type', \

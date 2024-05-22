@@ -14,3 +14,6 @@ def create_dim_date():
     dim_date['quarter'] = dim_date['date_id'].dt.to_period('Q')
     
     return dim_date
+
+def update_dim_date():
+    pass
