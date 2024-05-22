@@ -55,7 +55,7 @@ def mock_s3_client(aws_creds):
         yield boto3.client("s3")
 
 
-@pytest.fixture()
+@pytest.fixture(scope='function')
 def get_sample_data_from_db(connect_to_db):
     conn = connect_to_db
     query = f"""SELECT *
