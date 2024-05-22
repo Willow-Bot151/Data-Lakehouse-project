@@ -30,21 +30,13 @@ def ingestion_lambda_handler(event, context):
         "payment",
         "transaction",
     ]
-    try:
-        s3_client = init_s3_client()
-    except ClientError as e:
-        logger.error("-!ERROR!- S3 client failed")
-        close_connection(conn)
-        raise e
+    s3_client = init_s3_client()
+    logger.error("-!ERROR!- S3 client failed")
     
-    try:
-        dt = get_current_timestamp(s3_client)
-        latest_timestamp = get_current_timestamp(s3_client)
-    except Exception as e:
-        logger.error("""-!ERROR!- An error occured accessing the timestamp from s3 bucket. 
+    dt = get_current_timestamp(s3_client)
+    latest_timestamp = get_current_timestamp(s3_client)
+    logger.error("""-!ERROR!- An error occured accessing the timestamp from s3 bucket. 
                         Please check that there is a timestamp and it's format is correct""")
-        close_connection(conn)
-        raise e("failed to get timestamp")
 
     for table in table_names:
         individual_table = convert_datetimes_and_decimals(
@@ -59,14 +51,11 @@ def ingestion_lambda_handler(event, context):
         
         
         if len(individual_table[table]) > 0:
-            try:
-                potential_timestamp = get_datestamp_from_table(individual_table, table)
-                dt_potential_timestamp = datetime.fromisoformat(potential_timestamp) 
-                if dt_potential_timestamp > latest_timestamp:
-                    latest_timestamp = dt_potential_timestamp
-            except Exception as e:
+            potential_timestamp = get_datestamp_from_table(individual_table, table)
+            dt_potential_timestamp = datetime.fromisoformat(potential_timestamp) 
+            if dt_potential_timestamp > latest_timestamp:
+                latest_timestamp = dt_potential_timestamp
                 logger.error("-!ERROR!- couldn't retrieve datestamp from table")
-                raise e
 
     put_timestamp_in_s3(latest_timestamp, s3_client)
     logger.error("failed to put timestamp in bucket")
