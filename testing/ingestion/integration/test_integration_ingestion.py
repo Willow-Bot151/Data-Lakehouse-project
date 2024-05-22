@@ -1,7 +1,5 @@
-from pg8000.native import Connection
 import os
-from dotenv import load_dotenv
-from pg8000.native import literal, identifier
+from pg8000.native import literal, identifier, Connection
 import datetime
 from src.ingestion.utils.test_zip.utils import (
     convert_datetimes_and_decimals,
@@ -10,28 +8,39 @@ from src.ingestion.utils.test_zip.utils import (
 from moto import mock_aws
 import boto3
 import pytest
+from botocore.exceptions import ClientError
+from botocore.session import get_session
 import json
 
-load_dotenv(".env")
 
-user = os.getenv("PG_USER")
-password = os.getenv("PG_PASSWORD")
-database = os.getenv("PG_DATABASE")
-host = os.getenv("PG_HOST")
-port = int(os.getenv("PG_PORT"))
-
-
+@pytest.fixture()
 def connect_to_db():
-    return Connection(
-        user=user, password=password, database=database, host=host, port=port
-    )
+    secret_name = "team_reveries_PSQL"
+    region_name = "eu-west-2"
+    session = get_session()
+    client = session.create_client("secretsmanager", region_name=region_name)
+    try:
+        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        secret = get_secret_value_response["SecretString"]
+        secret_value = json.loads(secret)
+        username = secret_value["username"]
+        password = secret_value["password"]
+        database = secret_value["dbname"]
+        host = secret_value["host"]
+        port = secret_value["port"]
+        conn =  Connection(
+            username, password=password, database=database, host=host, port=port
+        )
+        return conn
+    except ClientError as e:
+        raise ValueError("No connection to DB returned")
 
 
 def close_connection(conn):
     conn.close()
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture()
 def aws_creds():
     os.environ["AWS_ACCESS_KEY_ID"] = "test"
     os.environ["AWS_SECRET_ACCESS_KEY"] = "test"
@@ -47,8 +56,8 @@ def mock_s3_client(aws_creds):
 
 
 @pytest.fixture()
-def get_sample_data_from_db():
-    conn = connect_to_db()
+def get_sample_data_from_db(connect_to_db):
+    conn = connect_to_db
     query = f"""SELECT *
                 FROM {identifier('sales_order')}
                 WHERE last_updated > {literal(datetime.datetime(2022,1,1,13,20,22))}

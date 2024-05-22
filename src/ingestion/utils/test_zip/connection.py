@@ -18,12 +18,15 @@ def connect_to_db():
         database = secret_value["dbname"]
         host = secret_value["host"]
         port = secret_value["port"]
-
         return Connection(
-            username, password=password, database=database, host=host, port=port
+            username,
+            password=password,
+            database=database,
+            host=host,
+            port=port,
         )
     except ClientError as e:
-        raise ValueError("No connection to DB returned")
+        raise e("No connection to DB returned")
 
 
 def close_connection(conn):
