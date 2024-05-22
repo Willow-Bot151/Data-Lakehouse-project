@@ -29,5 +29,10 @@ def s3_reader_many_files():
     print(df)
     return df
 
+
+#last_modified_begin – Filter the s3 files by the Last modified date of the object.
+    # The filter is applied only after list all s3 files.
+#last_modified_end (datetime, optional) – Filter the s3 files by the Last
+   # modified date of the object. The filter is applied only after list all s3 files.
 # df=s3_reader_many_files()
 # print(df)
