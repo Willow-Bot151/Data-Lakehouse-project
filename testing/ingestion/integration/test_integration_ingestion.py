@@ -28,7 +28,7 @@ def connect_to_db():
         database = secret_value["dbname"]
         host = secret_value["host"]
         port = secret_value["port"]
-        conn =  Connection(
+        conn = Connection(
             username, password=password, database=database, host=host, port=port
         )
         return conn
