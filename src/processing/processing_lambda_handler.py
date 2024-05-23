@@ -1,25 +1,25 @@
 
 
-ingestion_table_names = [
-        'design',
-        'currency',
-        'staff',
-        'counterparty',
-        'address',
-        'department'
-        'sales_order',
-        ]
+# ingestion_table_names = [
+#         'design',
+#         'currency',
+#         'staff',
+#         'counterparty',
+#         'address',
+#         'department'
+#         'sales_order',
+#         ]
 
 
-processed_table_names = [
-    'dim_date',
-    'dim_staff',
-    'dim_currency',
-    'dim_counterparty',
-    'dim_design',
-    'dim_location',
-    'fact_sales'
-   ]
+# processed_table_names = [
+#     'dim_date',
+#     'dim_staff',
+#     'dim_currency',
+#     'dim_counterparty',
+#     'dim_design',
+#     'dim_location',
+#     'fact_sales'
+#    ]
 
 
    #print("Received event: " + json.dumps(event, indent=2))
@@ -89,3 +89,4 @@ def processing_lambda(event={}, context={}):
           named 'start' somewhere in timestamp 
     
     '''
+    pass
