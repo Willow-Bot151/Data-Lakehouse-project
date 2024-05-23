@@ -18,16 +18,16 @@ resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_error_messages" {
   }
 }
 
-resource "aws_cloudwatch_log_metric_filter" "successful_ingestion_messages" {
-  name = "SuccessfulIngestionFilter"
-  pattern = "-STARTPROCESSING-"
-  log_group_name = "/aws/lambda/ingestion_lambda"
-  metric_transformation {
-    name = "SuccessfulIngestion"
-    namespace = "SuccesfulIngestion"
-    value = "1"
-  }
-}
+# resource "aws_cloudwatch_log_metric_filter" "successful_ingestion_messages" {
+#   name = "SuccessfulIngestionFilter"
+#   pattern = "-STARTPROCESSING-"
+#   log_group_name = "/aws/lambda/ingestion_lambda"
+#   metric_transformation {
+#     name = "SuccessfulIngestion"
+#     namespace = "SuccesfulIngestion"
+#     value = "1"
+#   }
+# }
 
 resource "aws_cloudwatch_metric_alarm" "ingestion_lambda_alarm" {
   metric_name               = aws_cloudwatch_log_metric_filter.ingestion_lambda_error_messages.name
