@@ -9,12 +9,13 @@
 
 resource "aws_cloudwatch_log_metric_filter" "ingestion_lambda_error_messages" {
   name           = "IngestionErrorFilter"
-  pattern        = "-ERROR-"  # needs to be changed depending on error handling
+  pattern        = "\"ERROR\""  # needs to be changed depending on error handling
   log_group_name = "/aws/lambda/ingestion_lambda" # aws_cloudwatch_log_group.ingestion_lambda_log_group.name
   metric_transformation {
       name = "ErrorCount"
-      namespace = var.metric_namespace
+      namespace = "Error"
       value = "1"
+      default_value = "0"
   }
 }
 
