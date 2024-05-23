@@ -23,9 +23,24 @@ variable "output_path" {
   default = "../src/ingestion/utils/ingestion_lambda_handler.zip"
 }
 
-variable "metric_namespace" {
+variable "metric_namespace_error" {
   type = string
   default = "Errors"
+}
+
+variable "metric_namespace_success" {
+  type = string
+  default = "Successes"
+}
+
+variable "metric_transformation_name_success" {
+  type = string
+  default = "SuccessfulIngestion"
+}
+
+variable "metric_transformation_name_error" {
+  type = string
+  default = "ErrorCount"
 }
 
 data "aws_caller_identity" "current" {}
