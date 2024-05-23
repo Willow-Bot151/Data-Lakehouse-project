@@ -29,7 +29,6 @@ def aws_creds():
     os.environ['AWS_SESSION_TOKEN'] = 'test'
     os.environ['AWS_DEFAULT_REGION'] = 'eu-west-2'
 
-
 with open('testing/processing/test_date.txt') as f:
         timestamp_data = f.read()
 
@@ -47,7 +46,6 @@ def dummy_ingestion_bucket(s3_client):
             Body=timestamp_data, Bucket='dummy_ingestion_bucket',
             Key='test_date.txt')
 
-
 class TestDfNorm:
     def test_df_normalisation_does_what_its_says(self,test_data_to_df):
         test_df=test_data_to_df
@@ -57,7 +55,6 @@ class TestDfNorm:
         assert list(remodelled_df.columns) == ['transaction_id', 'transaction_type', \
                                          'sales_order_id', 'purchase_order_id', 'created_at', 'last_updated']
         assert remodelled_df['created_at'][0] == '2022-11-03T14:20:52.186000'
-
 
 class TestTimeStampReader:
     def test_read_timestamp_from_s3(self,dummy_ingestion_bucket,s3_client):
