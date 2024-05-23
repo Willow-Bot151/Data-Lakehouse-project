@@ -23,6 +23,10 @@ variable "output_path" {
   default = "../src/ingestion/utils/ingestion_lambda_handler.zip"
 }
 
+variable "metric_namespace" {
+  type = string
+  default = "Errors"
+}
 
 data "aws_caller_identity" "current" {}
 
