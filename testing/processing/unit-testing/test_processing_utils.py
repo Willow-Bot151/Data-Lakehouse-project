@@ -103,28 +103,25 @@ class TestDfToParquet:
 
 
 
-
 @pytest.fixture
 def dummy_ingestion_bucket2(s3_client):
+    bucket='dummy_ingestion_bucket2'
     s3_client.create_bucket(
-        Bucket='dummy_ingestion_bucket2',
+        Bucket=bucket,
         CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
-    
-    with open('testing/processing/test_data_list_object.txt') as f:
-        object_list = f.read()
-
-    s3_client.put_object(
-            Body=object_list, Bucket='dummy_ingestion_bucket2',
-            Key='test_data_list_object.txt')
-    
-    test= s3_client.list_objects_v2(Bucket='dummy_ingestion_bucket2')
-    print(test)
+    object_keys = [
+        'transaction/--05:22:2024-08:28:06--purchase_order-data',
+        'transaction/--05:22:2024-08:28:23--purchase_order-data'
+    ]
+    for key in object_keys:
+        s3_client.put_object(
+            Body='', Bucket=bucket,
+            Key=key)
+    return bucket
 
 class TestListObjects:
     def test_list_objects_in_bucket(self, dummy_ingestion_bucket2, s3_client):
-        response = s3_client.list_objects_v2(Bucket='dummy_ingestion_bucket2')
-        expected = response['Body'].read().decode('utf-8')
-        
         result = list_objects_in_bucket(dummy_ingestion_bucket2,'transaction')
-        assert len(result["Contents"]) == 2
-        #assert result["Contents"][0]["Key"] == "test_date.txt"
+        print(result)
+        assert len(result) == 2
+        assert 's3://dummy_ingestion_bucket2/transaction/--05:22:2024-08:28:06--purchase_order-data' in result
