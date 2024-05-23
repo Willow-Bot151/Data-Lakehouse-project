@@ -77,7 +77,7 @@ resource "aws_sns_topic_subscription" "email_lambda_error_messages_2" {
 
 resource "aws_sns_topic_subscription" "email_lambda_error_messages_3" {
   protocol  = "email"
-  endpoint  = "lukedowney2014@gmail.com"
+  endpoint  = "lukedowney2014.ld@gmail.com"
   topic_arn = aws_sns_topic.lambda_errors.arn
 }
 
