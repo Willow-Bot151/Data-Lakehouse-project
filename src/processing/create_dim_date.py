@@ -4,6 +4,7 @@ def create_dim_date():
 
     date_range = pd.date_range(start="2022-01-01", end="2024-05-21", freq="D")
     dim_date = pd.date_range(start='2022-01-01', end='2024-05-21', freq='D')
+    
     dim_date = pd.DataFrame(date_range, columns=['date_id'])
     dim_date['year'] = dim_date['date_id'].dt.year
     dim_date['month'] = dim_date['date_id'].dt.month
