@@ -1,4 +1,5 @@
-
+from create_dim_date import create_dim_date
+from processing_utils import df_to_parquet, init_s3_client, write_parquet_S3, write_timestamp_to_s3, read_timestamp_from_s3
 
 # ingestion_table_names = [
 #         'design',
@@ -46,10 +47,36 @@
 #     )
 
 
-def processing_lambda(event={}, context={}):
-    
+def test_processing_lambda(event={}, context={}):
+    s3_client = init_s3_client()
+    # ingestion_table_names = [
+    #     'design',
+    #     'currency',
+    #     'staff',
+    #     'counterparty',
+    #     'address',
+    #     'department'
+    #     'sales_order',
+    #     ]
+    # for key in ingestion_table_names:
+    #     pass
 
-    '''
+    dim_date = create_dim_date()
+    transform_to_parquet = df_to_parquet(dim_date)
+    end_timestamp = read_timestamp_from_s3("nc-team-reveries-ingestion", 'timestamp',s3_client=s3_client)
+    write_timestamp_to_s3(s3_client, end_timestamp)
+    write_parquet_S3(s3_client, transform_to_parquet,"dim_date")
+    
+test = test_processing_lambda()
+print(test)
+
+
+
+
+
+
+
+'''
     (1) Add logging! 
 
     (2) A time range needs to be defined to filter the ingestion files
@@ -89,4 +116,3 @@ def processing_lambda(event={}, context={}):
           named 'start' somewhere in timestamp 
     
     '''
-    pass

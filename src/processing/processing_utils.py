@@ -1,8 +1,8 @@
 import pandas as pd
-import boto3
 import json
 import datetime
 import awswrangler as wr
+import botocore
 
 def df_normalisation(df,table_name):
     if table_name in df.columns:
@@ -37,3 +37,24 @@ def list_objects_in_bucket(bucket_name,prefix):
     objects = wr.s3.list_objects(f's3://{bucket_name}/{prefix}')
     print(objects) 
     return objects
+
+
+def init_s3_client():
+    session = botocore.session.get_session()
+    s3_client = session.create_client("s3")
+    return s3_client
+
+def write_parquet_S3(s3_client,parquet,table):
+
+    s3_client.put_object(
+        Body=parquet,
+        Bucket="nc-team-reveries-processing",
+        Key=f"{table}/-data",
+    )
+
+def write_timestamp_to_s3(s3_client, timestamp):
+    s3_client.put_object(
+        Body= timestamp,
+        Bucket="nc-team-reveries-processing",
+        Key='timestamp'
+    )
