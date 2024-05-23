@@ -1,5 +1,5 @@
 from src.processing.processing_utils import df_normalisation, read_timestamp_from_s3,\
-    extract_timestamp_from_key,filter_files_by_timestamp, df_to_parquet
+    extract_timestamp_from_key,filter_files_by_timestamp, df_to_parquet, list_objects_in_bucket
 import pytest
 import json
 import boto3
@@ -45,6 +45,9 @@ def dummy_ingestion_bucket(s3_client):
     s3_client.put_object(
             Body=timestamp_data, Bucket='dummy_ingestion_bucket',
             Key='test_date.txt')
+
+
+
 
 class TestDfNorm:
     def test_df_normalisation_does_what_its_says(self,test_data_to_df):
@@ -98,3 +101,30 @@ class TestDfToParquet:
         assert result == expected
         assert isinstance(result, bytes)
 
+
+
+
+@pytest.fixture
+def dummy_ingestion_bucket2(s3_client):
+    s3_client.create_bucket(
+        Bucket='dummy_ingestion_bucket2',
+        CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+    
+    with open('testing/processing/test_data_list_object.txt') as f:
+        object_list = f.read()
+
+    s3_client.put_object(
+            Body=object_list, Bucket='dummy_ingestion_bucket2',
+            Key='test_data_list_object.txt')
+    
+    test= s3_client.list_objects_v2(Bucket='dummy_ingestion_bucket2')
+    print(test)
+
+class TestListObjects:
+    def test_list_objects_in_bucket(self, dummy_ingestion_bucket2, s3_client):
+        response = s3_client.list_objects_v2(Bucket='dummy_ingestion_bucket2')
+        expected = response['Body'].read().decode('utf-8')
+        
+        result = list_objects_in_bucket(dummy_ingestion_bucket2,'transaction')
+        assert len(result["Contents"]) == 2
+        #assert result["Contents"][0]["Key"] == "test_date.txt"

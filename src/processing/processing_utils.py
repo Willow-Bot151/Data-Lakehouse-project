@@ -29,7 +29,11 @@ def filter_files_by_timestamp(bucket_name,prefix,objects, start_time, end_time):
             filtered_files.append(f's3://{bucket_name}/{prefix}{key}')
     return filtered_files
 
-
 def df_to_parquet(df):
     return df.to_parquet()
 
+
+def list_objects_in_bucket(bucket_name,prefix):
+    objects = wr.s3.list_objects(f's3://{bucket_name}/{prefix}')
+    print(objects) 
+    return objects
