@@ -12,9 +12,11 @@ from utils import (
 import logging
 from botocore.exceptions import ClientError
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger()
-
+# logging.basicConfig(level=logging.DEBUG)
+# logger = logging.getLogger()
+logger = logging.getLogger('Ingestion Lambda Log')
+logging.basicConfig()
+logger.setLevel(logging.INFO)
 
 def ingestion_lambda_handler(event, context):
     logger.info("Ingestion process beginning")
@@ -56,20 +58,20 @@ def ingestion_lambda_handler(event, context):
         try:
             individual_table = convert_datetimes_and_decimals(query_updated_table_information(conn, table, dt))
         except Exception as e:
-            logger.error("-!ERROR!- An error occurred in DB query")
-            raise e("An error occurred in DB query")
+            logger.error("-!ERROR!- An error occurred in DB query for %s table", table)
+            raise e("An error occurred in DB queryfor %s table", table)
         if len(individual_table[table]) > 0:
             try:
                 put_object_in_bucket(table, individual_table, s3_client, "nc-team-reveries-ingestion")
             except Exception as e:
-                logger.error("-!ERROR!- Failed to put object in bucket")
-                raise e("Failed to put object in bucket")
+                logger.error("-!ERROR!- Failed to put object in bucket at %s table", table)
+                raise e("Failed to put object in bucketat %s table", table)
         if len(individual_table[table]) > 0:
             try:
                 potential_timestamp = get_datestamp_from_table(individual_table, table)
             except Exception as e:
-                logger.error("-!ERROR!- couldn't retrieve datestamp from table")
-                raise e("couldn't retrieve datestamp from table")
+                logger.error("-!ERROR!- couldn't retrieve datestamp from table at %s table", table)
+                raise e("couldn't retrieve datestamp from tableat %s table", table)
             dt_potential_timestamp = datetime.fromisoformat(potential_timestamp)
             if dt_potential_timestamp > latest_timestamp:
                 latest_timestamp = dt_potential_timestamp
@@ -77,7 +79,7 @@ def ingestion_lambda_handler(event, context):
     try:
         put_timestamp_in_s3(latest_timestamp, s3_client)
     except Exception as e:
-        logger.error("-!ERROR!- failed to put timestamp in bucket")
-        raise e("failed to put timestamp in bucket")
+        logger.error("-!ERROR!- failed to put timestamp in bucket with timestamp %s", latest_timestamp)
+        raise e("failed to put timestamp in bucketwith timestamp %s", latest_timestamp)
     logger.info("-!STARTPROCESSING!- Ingestion Process is complete.")
     close_connection(conn=conn)
