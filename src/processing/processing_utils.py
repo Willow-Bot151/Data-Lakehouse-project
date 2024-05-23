@@ -37,3 +37,20 @@ def list_objects_in_bucket(bucket_name,prefix):
     objects = wr.s3.list_objects(f's3://{bucket_name}/{prefix}')
     print(objects) 
     return objects
+
+"""
+Organise data with a key of -dim/fact name- and then name the file -a parquet file with a datestamp between two points of time-
+
+{table_name}/{date_start}-{date_end}/entries
+
+Function requirements (parquet_data, )
+Clean data for null/bad values :(
+For loop to iterate over rows?
+"""
+def write_parquet_file_to_s3(file, s3_client, bucket_name, table_name, date_start, date_end):
+    key = f"{table_name}/{date_start}_{date_end}/entries"
+    response = s3_client.put_object(
+        Bucket=bucket_name,
+        Key=key,
+        Body=file 
+    )

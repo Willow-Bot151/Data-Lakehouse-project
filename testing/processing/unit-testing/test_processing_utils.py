@@ -1,5 +1,5 @@
 from src.processing.processing_utils import df_normalisation, read_timestamp_from_s3,\
-    extract_timestamp_from_key,filter_files_by_timestamp, df_to_parquet, list_objects_in_bucket
+    extract_timestamp_from_key,filter_files_by_timestamp, df_to_parquet, list_objects_in_bucket, write_parquet_file_to_s3
 import pytest
 import json
 import boto3
@@ -8,6 +8,7 @@ import datetime
 import pandas as pd
 from moto import mock_aws
 from unittest.mock import patch
+import io
 
 @pytest.fixture
 def test_data_to_df():
@@ -45,7 +46,6 @@ def dummy_ingestion_bucket(s3_client):
     s3_client.put_object(
             Body=timestamp_data, Bucket='dummy_ingestion_bucket',
             Key='test_date.txt')
-
 
 
 
@@ -125,3 +125,27 @@ class TestListObjects:
         print(result)
         assert len(result) == 2
         assert 's3://dummy_ingestion_bucket2/transaction/--05:22:2024-08:28:06--purchase_order-data' in result
+
+class TestWriteParquetToS3:
+    def test_write_parquet_file_to_s3(self, s3_client):
+        garbooge = pd.Series({1:"GBP", 2:"USD"})
+        garbooge2 = pd.Series({1:"GBP", 2:"USD"})
+        df = pd.DataFrame({"currency_code": garbooge, "currency_name": garbooge2})
+        table_name = "dim_currency"
+        date_start = "2022-11-03T14:20:49.962000"
+        date_end = "2022-11-03T19:20:49.962000"
+        parq_df = df.to_parquet()
+        bucket_name = "garbooge_bucket"
+        s3_client.create_bucket(
+            Bucket= bucket_name,
+            CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+        
+        written_file = write_parquet_file_to_s3(parq_df, s3_client, bucket_name, table_name, date_start, date_end)
+
+        returned_file = s3_client.get_object(
+            Bucket=bucket_name,
+            Key=f"{table_name}/{date_start}_{date_end}/entries"
+        )
+        buffer = io.BytesIO(returned_file['Body'].read())
+
+        assert pd.read_parquet(buffer).equals(df)
