@@ -20,7 +20,7 @@ resource "aws_iam_role" "lambda_role" {
     EOF
 }
 
-resource "aws_iam_role" "ingestion_lambda_role" {
+resource "aws_iam_role" "processing_lambda_role" {
     name_prefix = "role-${var.Processing_lambda}"
     assume_role_policy = <<EOF
     {
@@ -121,7 +121,7 @@ resource "aws_iam_role_policy_attachment" "lambda_cw_policy_attachment" {
 }
 
 resource "aws_iam_role_policy_attachment" "processing_lambda_cw_policy_attachment" {
-    role = aws_iam_role.ingestion_lambda_role.name
+    role = aws_iam_role.processing_lambda_role.name
     policy_arn = aws_iam_policy.cw_policy.arn
 }
 
