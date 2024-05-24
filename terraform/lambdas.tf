@@ -67,17 +67,45 @@ data "archive_file" "processing_lambda_data" {
   output_path = "../processing_deploy.zip"
 }
 
+
+
+resource "aws_lambda_permission" "allow_bucket" {
+  statement_id  = "AllowExecutionFromS3Bucket"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.processing_lambda.arn
+  principal     = "s3.amazonaws.com"
+  source_arn    = aws_s3_bucket.ingestion_bucket.arn
+}
+
 resource "aws_lambda_function" "processing_lambda" {
     function_name = "processing_lambda"
     filename = "../processing_deploy.zip"
     role = aws_iam_role.lambda_role.arn 
-    handler = "processing_lambda_handler.processing_lambda" #change me
+    handler = "processing_lambda_handler.test_processing_lambda" #change me
     runtime = var.python_runtime        
     timeout = 60                 # --- consider time taken of ingestion lambda and when this one is triggered
     source_code_hash = data.archive_file.processing_lambda_data.output_base64sha256
     layers = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python311:12"] #think about account name/id if this doesn't work
     
 }
+
+
+resource "aws_lambda_function_event_invoke_config" "processing_lambda_invoke_config" {
+  function_name                = aws_lambda_function.processing_lambda.function_name #change me
+  maximum_event_age_in_seconds = 60
+  maximum_retry_attempts       = 0
+  qualifier     = "$LATEST"
+}
+
+
+# resource "aws_lambda_permission" "allow_eventbridge_trigger_processing" {
+#   action = "lambda:InvokeFunction"
+#   function_name = aws_lambda_function.ingestion_lambda.function_name #change me
+#   principal = "events.amazonaws.com"
+#   source_arn = aws_cloudwatch_event_rule.ingestion_scheduler.arn #change me?
+#   source_account = data.aws_caller_identity.current.account_id
+# }
+
 #layer reference for main body if we need extra depedencies
 #aws_lambda_layer_version.processing_dependencies_layer.arn
 
@@ -103,19 +131,4 @@ resource "aws_lambda_function" "processing_lambda" {
 #   principal = "s3.amazonaws.com"
 #   source_arn = aws_s3_bucket.ingestion_bucket.arn #change me?
 #   source_account = data.aws_caller_identity.current.account_id
-# }
-
-# resource "aws_lambda_permission" "allow_eventbridge_trigger_processing" {
-#   action = "lambda:InvokeFunction"
-#   function_name = aws_lambda_function.ingestion_lambda.function_name #change me
-#   principal = "events.amazonaws.com"
-#   source_arn = aws_cloudwatch_event_rule.ingestion_scheduler.arn #change me?
-#   source_account = data.aws_caller_identity.current.account_id
-# }
-
-# resource "aws_lambda_function_event_invoke_config" "processing_lambda_invoke_config" {
-#   function_name                = aws_lambda_function.ingestion_lambda.function_name #change me
-#   maximum_event_age_in_seconds = 60
-#   maximum_retry_attempts       = 0
-#   qualifier     = "$LATEST"
 # }

@@ -3,6 +3,11 @@ variable "lambda_name" {
   default = "ingestion_lambda"
 }
 
+variable "Processing_lambda" {
+  type = string
+  default = "processing_lambda"
+}
+
 variable "aws_region" {
   type = string
   default = "eu-west-2"
