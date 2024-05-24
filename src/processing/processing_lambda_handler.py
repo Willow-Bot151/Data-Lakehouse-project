@@ -1,7 +1,10 @@
 from create_dim_date import create_dim_date
-from processing_utils import df_to_parquet, init_s3_client,  write_timestamp_to_s3, read_timestamp_from_s3, write_parquet_file_to_s3
-from s3_file_reader import s3_reader_many_files
+from processing_utils import df_to_parquet, init_s3_client,  write_timestamp_to_s3, \
+                read_timestamp_from_s3, write_parquet_file_to_s3,filter_files_by_timestamp, \
+                list_objects_in_bucket
+from s3_file_reader import s3_reader_many_files, s3_reader_filtered
 import botocore
+import datetime
 
 
 # processed_table_names = [
@@ -30,44 +33,45 @@ def processed_lambda_handler(event={}, context={}):
         ingestion_bucket="nc-team-reveries-ingestion"
         processed_bucket="nc-team-reveries-processing"
 
-        # df_dict={}
-        # for table in ingestion_table_names:
-        #         print('processing:', table)
-        #         df=s3_reader_many_files(table)
-        #         df_dict[table]=df
-
-
-
         df_dict={}
-        end_timestep=read_timestamp_from_s3(ingestion_bucket, 'timestamp',s3_client)
-        start_timestep=read_timestamp_from_s3(processed_bucket, 'timestamp',s3_client)                      
-        #for table in ingestion_table_names:
+        end_timestep=read_timestamp_from_s3(ingestion_bucket, 'timestamp_start',s3_client)
+        start_timestep=read_timestamp_from_s3(processed_bucket, 'timestamp',s3_client)  
 
+        print('end:',end_timestep)
+        print('start:',start_timestep)      
 
-        print(end_timestep)
-        print(start_timestep)
+        date_format = "%m:%d:%Y-%H:%M:%S"
+        end_time= datetime.datetime.strptime(end_timestep, date_format)
+        start_time= datetime.datetime.strptime(start_timestep, date_format)
 
+        for table in ingestion_table_names:
+                objects=list_objects_in_bucket(ingestion_bucket,table)
+                filtered_files=filter_files_by_timestamp(ingestion_bucket,table,objects, start_time, end_time)
+                df=s3_reader_filtered(table,filtered_files)
 
-        # call all dim and fact functions
+                df_dict[table]=df
+
         
 
-
-
-        # write end timestep to processed bucket
-        #write_timestamp_to_s3(s3_client, processed_bucket, end_timestep)
-
+        # now call each dim_table function, return dim_table as df
+        
+        # output to parquet function
+        
 
         # cols_currency=list(df_dict['currency'].columns)
         # print(cols_currency)
         # cols_address=list(df_dict['address'].columns)
         # print(cols_address)
-        # return df_dict
+        
+        #date_time = end_time.strftime("%m:%d:%Y-%H:%M:%S")
+        #write_timestamp_to_s3((s3_client, processed_bucket, timestamp)
+
+        return df_dict
 
 
-processed_lambda_handler()
+dict_df=processed_lambda_handler()
 
 
-dfl=processed_lambda_handler()
 
 '''
 (1) Add logging! 
@@ -76,9 +80,6 @@ dfl=processed_lambda_handler()
         - Get current timestamp from ingestion bucket - ie this form the 'end' timestamp of range for grabbing files
         - ingestion bucket timestamp  will be saved to processed bucket to become the start timestamp 
         for next run
-
-        
-
 
         
 (3) make processed bucket/timestamp

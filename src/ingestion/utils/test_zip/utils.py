@@ -114,3 +114,12 @@ def add_ts_for_processing_bucket(s3_client,dt_now):
         Bucket="nc-team-reveries-ingestion",
         Key=f"timestamp_start"
     )
+
+def initialise_process_bucket_with_timestamp(s3_client):
+    dt = datetime.datetime(2022, 1, 1, 1, 1, 1)
+    date_time = dt.strftime("%m:%d:%Y-%H:%M:%S")
+    s3_client.put_object(
+        Body=date_time,
+        Bucket="nc-team-reveries-processing",
+        Key=f"timestamp",
+    )
