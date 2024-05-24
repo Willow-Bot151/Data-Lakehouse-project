@@ -38,23 +38,24 @@ def list_objects_in_bucket(bucket_name,prefix):
     print(objects) 
     return objects
 
+def write_parquet_file_to_s3(file, s3_client, bucket_name, table_name, date_start, date_end):
+    key = f"{table_name}/{date_start}_{date_end}_entries"
+    response = s3_client.put_object(
+        Bucket=bucket_name,
+        Key=key,
+        Body=file 
+
 
 def init_s3_client():
     session = botocore.session.get_session()
     s3_client = session.create_client("s3")
     return s3_client
 
-def write_parquet_S3(s3_client,parquet,table):
-
-    s3_client.put_object(
-        Body=parquet,
-        Bucket="nc-team-reveries-processing",
-        Key=f"{table}/-data",
-    )
 
 def write_timestamp_to_s3(s3_client, timestamp):
     s3_client.put_object(
         Body= timestamp,
         Bucket="nc-team-reveries-processing",
         Key='timestamp'
+
     )
