@@ -3,6 +3,7 @@ import json
 import datetime
 import awswrangler as wr
 import botocore
+from botocore.exceptions import ClientError
 
 def df_normalisation(df,table_name):
     if table_name in df.columns:
@@ -34,7 +35,7 @@ def df_to_parquet(df):
 
 
 def list_objects_in_bucket(bucket_name,prefix):
-    objects = wr.s3.list_objects(f's3://{bucket_name}/{prefix}')
+    objects = wr.s3.list_objects(f's3://{bucket_name}/{prefix}/')
     print(objects) 
     return objects
 
@@ -47,15 +48,27 @@ def write_parquet_file_to_s3(file, s3_client, bucket_name, table_name, date_star
     )
 
 def init_s3_client():
-    session = botocore.session.get_session()
-    s3_client = session.create_client("s3")
-    return s3_client
+    try: 
+        session = botocore.session.get_session()
+        s3_client = session.create_client("s3")
+        return s3_client
+    except ClientError as e:
+        print("-ERROR- Failure to connect to s3 client, please check credentials")
+        return None
+                
 
 
-def write_timestamp_to_s3(s3_client, timestamp):
+def write_timestamp_to_s3(s3_client, bucket_name, timestamp):
     s3_client.put_object(
         Body= timestamp,
-        Bucket="nc-team-reveries-processing",
+        Bucket=bucket_name,
         Key='timestamp'
+    )
 
+def initialise_processing_bucket_with_timestamp(s3_client):
+    dt = datetime.datetime(2022, 1, 1, 1, 1, 1, 111111)
+    s3_client.put_object(
+        Body=json.dumps(dt.isoformat()),
+        Bucket="nc-team-reveries-processing",
+        Key=f"timestamp",
     )

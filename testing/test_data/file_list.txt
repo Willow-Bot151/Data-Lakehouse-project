@@ -1,0 +1,6 @@
+input= ['s3://nc-team-reveries-ingestion/sales_order/--05:24:2024-11:15:47--sales_order-data', 
+        's3://nc-team-reveries-ingestion/sales_order/--05:24:2024-11:24:25--sales_order-data', 
+        's3://nc-team-reveries-ingestion/sales_order/--05:24:2024-11:34:25--sales_order-data', 
+        's3://nc-team-reveries-ingestion/sales_order/--05:24:2024-11:44:25--sales_order-data', 
+        's3://nc-team-reveries-ingestion/sales_order/--05:24:2024-11:54:25--sales_order-data', 
+        's3://nc-team-reveries-ingestion/sales_order/--05:24:2024-12:04:25--sales_order-data']
