@@ -44,7 +44,7 @@ def write_parquet_file_to_s3(file, s3_client, bucket_name, table_name, date_star
         Bucket=bucket_name,
         Key=key,
         Body=file 
-
+    )
 
 def init_s3_client():
     session = botocore.session.get_session()
