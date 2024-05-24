@@ -8,6 +8,8 @@ from utils import (
     get_current_timestamp,
     put_timestamp_in_s3,
     convert_datetimes_and_decimals,
+    add_ts_for_processing_bucket,
+    get_datetime_now
 )
 import logging
 from botocore.exceptions import ClientError
@@ -53,6 +55,10 @@ def ingestion_lambda_handler(event, context):
         """-ERROR- An error occured accessing the timestamp from s3 bucket. 
                         Please check that there is a timestamp and it's format is correct""")
         raise e("An error occured accessing the timestamp from s3 bucket. Please check that there is a timestamp and it's format is correct")
+   
+   
+    dt_now=get_datetime_now()
+    add_ts_for_processing_bucket(s3_client,dt_now)
 
     for table in table_names:
         try:
@@ -62,7 +68,7 @@ def ingestion_lambda_handler(event, context):
             raise e("An error occurred in DB queryfor %s table", table)
         if len(individual_table[table]) > 0:
             try:
-                put_object_in_bucket(table, individual_table, s3_client, "nc-team-reveries-ingestion")
+                put_object_in_bucket(table, individual_table, s3_client, "nc-team-reveries-ingestion",dt_now)
             except Exception as e:
                 logger.error("-ERROR- Failed to put object in bucket at %s table", table)
                 raise e("Failed to put object in bucketat %s table", table)

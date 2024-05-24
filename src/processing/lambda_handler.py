@@ -1,14 +1,5 @@
 
 
-# ingestion_table_names = [
-#         'design',
-#         'currency',
-#         'staff',
-#         'counterparty',
-#         'address',
-#         'department'
-#         'sales_order',
-#         ]
 
 
 # processed_table_names = [

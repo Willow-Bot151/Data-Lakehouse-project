@@ -69,12 +69,12 @@ def get_datetime_now():
     return date_time
 
 
-def put_object_in_bucket(table, put_table, s3_client, bucket_name):
-    date_time = get_datetime_now()
+def put_object_in_bucket(table, put_table, s3_client, bucket_name,dt_now):
+    #date_time = get_datetime_now()
     s3_client.put_object(
         Body=json.dumps(put_table),
         Bucket=bucket_name,
-        Key=f"{table}/--{date_time}--{table}-data",
+        Key=f"{table}/--{dt_now}--{table}-data",
     )
 
 
@@ -107,3 +107,10 @@ def convert_datetimes_and_decimals(unconverted_json):
                     entry[m] = str(n)
     return unconverted_json
 
+
+def add_ts_for_processing_bucket(s3_client,dt_now):
+    s3_client.put_object(
+        Body=dt_now,
+        Bucket="nc-team-reveries-ingestion",
+        Key=f"timestamp_start"
+    )
