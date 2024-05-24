@@ -32,7 +32,7 @@ def s3_reader_many_files(table):
     bucket_name = 'nc-team-reveries-ingestion'
     file_key = table
     df = wr.s3.read_json(path=f's3://{bucket_name}/{file_key}/')
-    if 'transaction' in df.columns:
+    if table in df.columns:
         df_norm = df_normalisation(df,table)
         return df_norm
     else:

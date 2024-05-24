@@ -52,10 +52,17 @@ def init_s3_client():
     return s3_client
 
 
-def write_timestamp_to_s3(s3_client, timestamp):
+def write_timestamp_to_s3(s3_client, bucket_name, timestamp):
     s3_client.put_object(
         Body= timestamp,
-        Bucket="nc-team-reveries-processing",
+        Bucket=bucket_name,
         Key='timestamp'
+    )
 
+def initialise_processing_bucket_with_timestamp(s3_client):
+    dt = datetime.datetime(2022, 1, 1, 1, 1, 1, 111111)
+    s3_client.put_object(
+        Body=json.dumps(dt.isoformat()),
+        Bucket="nc-team-reveries-processing",
+        Key=f"timestamp",
     )
