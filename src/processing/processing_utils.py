@@ -3,6 +3,7 @@ import json
 import datetime
 import awswrangler as wr
 import botocore
+from botocore.exceptions import ClientError
 
 def df_normalisation(df,table_name):
     if table_name in df.columns:
@@ -26,7 +27,7 @@ def filter_files_by_timestamp(bucket_name,prefix,objects, start_time, end_time):
         key = obj.split('/')[-1]
         timestamp = extract_timestamp_from_key(key)
         if timestamp and start_time <= timestamp <= end_time:
-            filtered_files.append(f's3://{bucket_name}/{prefix}/{key}')
+            filtered_files.append(f's3://{bucket_name}/{prefix}{key}')
     return filtered_files
 
 def df_to_parquet(df):
@@ -47,9 +48,14 @@ def write_parquet_file_to_s3(file, s3_client, bucket_name, table_name, date_star
     )
 
 def init_s3_client():
-    session = botocore.session.get_session()
-    s3_client = session.create_client("s3")
-    return s3_client
+    try: 
+        session = botocore.session.get_session()
+        s3_client = session.create_client("s3")
+        return s3_client
+    except ClientError as e:
+        print("-ERROR- Failure to connect to s3 client, please check credentials")
+        return None
+                
 
 
 def write_timestamp_to_s3(s3_client, bucket_name, timestamp):

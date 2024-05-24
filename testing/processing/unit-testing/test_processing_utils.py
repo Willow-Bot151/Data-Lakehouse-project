@@ -1,5 +1,5 @@
 from src.processing.processing_utils import df_normalisation, read_timestamp_from_s3,\
-    extract_timestamp_from_key,filter_files_by_timestamp, df_to_parquet, list_objects_in_bucket, write_parquet_file_to_s3
+    extract_timestamp_from_key,filter_files_by_timestamp, df_to_parquet, list_objects_in_bucket, write_parquet_file_to_s3, init_s3_client
 import pytest
 import json
 import boto3
@@ -9,6 +9,7 @@ import pandas as pd
 from moto import mock_aws
 from unittest.mock import patch
 import io
+from botocore.exceptions import ClientError
 
 @pytest.fixture
 def test_data_to_df():
@@ -146,8 +147,16 @@ class TestWriteParquetToS3:
 
         returned_file = s3_client.get_object(
             Bucket=bucket_name,
-            Key=f"{table_name}/{date_start}_{date_end}/entries"
+            Key=f"{table_name}/{date_start}_{date_end}_entries"
         )
         buffer = io.BytesIO(returned_file['Body'].read())
 
         assert pd.read_parquet(buffer).equals(df)
+
+
+# class TestErrorHandling:
+#     @pytest.mark.it("Tests for error handling on failure to connect to s3 client")
+#     @patch("init_s3_client", return_value="bad_value")
+#     def test_error_handling_for_client_connection(self):
+#         with pytest.raises(ClientError):
+#             init_s3_client
