@@ -12,6 +12,14 @@ class TestLocationDimensionTable:
             dim_location = pd.DataFrame(ingestion_address)
          assert isinstance(create_dim_location(dim_location),pd.DataFrame)
         
+    def test_create_dim_location_not_same_as_original_dataframe(self):
+        with open("testing/processing/test_data/test_address_json_data.json") as f:
+            ingestion_address = json.load(f)["address"]
+            
+            dim_location = pd.DataFrame(ingestion_address)
+            result = create_dim_location(dim_location)
+        assert list(dim_location.columns) != list(result.columns)
+        
     def test_create_dim_location_df_address_id_column_renamed_to_location_id(self):
         with open("testing/processing/test_data/test_address_json_data.json") as f:
             ingestion_address = json.load(f)["address"]

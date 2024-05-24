@@ -14,6 +14,17 @@ class TestStaffDimensionTable:
         dim_staff = pd.DataFrame(ingestion_staff)
         dim_dept = pd.DataFrame(ingestion_dept)
         assert isinstance(create_dim_staff(dim_staff,dim_dept),pd.DataFrame)
+    
+    def test_create_dim_staff_not_same_as_original_staff_dataframe(self):
+        with open("testing/processing/test_data/test_staff_json_data.json") as staff:
+            ingestion_staff = json.load(staff)["staff"]
+        with open("testing/processing/test_data/test_dept_json_data.json") as dept:
+            ingestion_dept = json.load(dept)["department"]
+        
+        dim_staff = pd.DataFrame(ingestion_staff)
+        dim_dept = pd.DataFrame(ingestion_dept)
+        result = create_dim_staff(dim_staff,dim_dept)
+        assert list(dim_staff.columns) != list(result.columns)
 
     def test_create_dim_staff_df_columns(self):
         with open("testing/processing/test_data/test_staff_json_data.json") as staff:
