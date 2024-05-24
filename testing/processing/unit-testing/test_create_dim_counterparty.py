@@ -32,6 +32,7 @@ class TestCreateDimCounterparty:
             counterparty_df=create_counterparty_df
             )
         assert isinstance(result,pd.DataFrame)
+    
     def test_dim_counterparty_func_has_star_schema_columns(self, create_address_df, create_counterparty_df):
         expected = [
             'counterparty_id',
@@ -40,7 +41,7 @@ class TestCreateDimCounterparty:
             'counterparty_legal_address_line2',
             'counterparty_legal_district',
             'counterparty_legal_city',
-            'counterparty_legal_postcode',
+            'counterparty_legal_postal_code',
             'counterparty_legal_country',
             'counterparty_legal_phone_number'
             ]
@@ -48,36 +49,59 @@ class TestCreateDimCounterparty:
             address_df=create_address_df,
             counterparty_df=create_counterparty_df
             )
-        assert result.columns == expected
-    """
-    function must:
-        return df of dim data
-            must be a df
-            must have the star schema columns
-                compare list of columns and expected
-            input dfs unchanged
-            must have expected values
-            must not lose data
-                compare len of df_out to min(len of dfs_in)
-        take 
-    """
-class TestCleanMyDF:
-    def test_clean_data(self):
-        non_nulls = ['counterparty_id',
-        'counterparty_legal_name',
-        'counterparty_legal_address_line_1',
-        'counterparty_legal_city',
-        'counterparty_legal_postcode',
-        'counterparty_legal_country',
-        'counterparty_legal_phone_number']
+        for i in expected:
+            assert i in result.columns
+        for i in result.columns:
+            assert i in expected
+
+    def test_input_df_unchanged(self, create_address_df, create_counterparty_df):
+        copy_address_df = create_address_df.copy(deep = True)
+        copy_counterparty_df = create_counterparty_df.copy(deep = True)
+        result = create_dim_counterparty(
+            address_df=create_address_df,
+            counterparty_df=create_counterparty_df
+            )
+        assert create_address_df.equals(copy_address_df)
+        assert create_counterparty_df.equals(copy_counterparty_df)
     
-        strings = ['counterparty_id',
-        'counterparty_legal_name',
-        'counterparty_legal_address_line_1',
-        'counterparty_legal_address_line2',
-        'counterparty_legal_district',
-        'counterparty_legal_city',
-        'counterparty_legal_postcode',
-        'counterparty_legal_country',
-        'counterparty_legal_phone_number']
-        ints = ['counterparty_id']
+    def test_returns_expected_values(self):
+        counterparty_data = {
+            "counterparty_id": 1, 
+            "counterparty_legal_name": "Fahey and Sons", 
+            "legal_address_id": 1, 
+            "commercial_contact": "Micheal Toy", 
+            "delivery_contact": "Mrs. Lucy Runolfsdottir", 
+            "created_at": "2022-11-03T14:20:51.563000", 
+            "last_updated": "2022-11-03T14:20:51.563000"
+            }
+        input_counterparty = pd.DataFrame([counterparty_data])
+        address_data = {
+            "address_id": 1, 
+            "address_line_1": "6826 Herzog Via", 
+            "address_line_2": None, 
+            "district": "Avon", 
+            "city": "New Patienceburgh", 
+            "postal_code": "28441", 
+            "country": "Turkey", 
+            "phone": "1803 637401", 
+            "created_at": "2022-11-03T14:20:49.962000", 
+            "last_updated": "2022-11-03T14:20:49.962000"
+            }   
+        input_address = pd.DataFrame([address_data])
+        print(input_counterparty, input_address)
+        expected = pd.DataFrame([{
+            'counterparty_id':1,
+            'counterparty_legal_name':"Fahey and Sons",
+            'counterparty_legal_address_line_1':"6826 Herzog Via",
+            'counterparty_legal_address_line2':None,
+            'counterparty_legal_district':"Avon",
+            'counterparty_legal_city':"New Patienceburgh",
+            'counterparty_legal_postal_code':"28441",
+            'counterparty_legal_country':"Turkey",
+            'counterparty_legal_phone_number':"1803 637401"
+        }])
+        result = create_dim_counterparty(
+            address_df=input_address,
+            counterparty_df=input_counterparty
+            )
+        assert result.equals(expected)
