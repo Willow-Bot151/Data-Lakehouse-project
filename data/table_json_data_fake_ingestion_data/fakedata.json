@@ -144,5 +144,23 @@
             "created_at": "2022-11-03T14:20:51.563000", 
             "last_updated": "2022-11-03T14:20:51.563000"
         }
+    ],
+    "design": [
+        {
+            "design_id": 8, 
+            "created_at": "2022-11-03T14:20:49.962000", 
+            "design_name": "Wooden", 
+            "file_location": "/usr", 
+            "file_name": "wooden-20220717-npgz.json", 
+            "last_updated": "2022-11-03T14:20:49.962000"
+        }, 
+        {
+            "design_id": 10, 
+            "created_at": "2022-11-03T14:20:49.962000", 
+            "design_name": "Soft", 
+            "file_location": "/usr/share", 
+            "file_name": "soft-20220201-hzz1.json", 
+            "last_updated": "2022-11-03T14:20:49.962000"
+        }
     ]
 }
