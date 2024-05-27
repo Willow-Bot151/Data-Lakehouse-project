@@ -1,6 +1,6 @@
-from connection import connect_to_db, close_connection
+from src.ingestion.utils.test_zip.connection import connect_to_db, close_connection
 from datetime import datetime
-from utils import (
+from src.ingestion.utils.test_zip.utils import (
     init_s3_client,
     put_object_in_bucket,
     query_updated_table_information,
