@@ -3,14 +3,17 @@ import json
 from src.processing.create_dim_currency import create_dim_currency
 import pandas as pd
 
+
 @pytest.fixture()
 def currency_test_data():
     with open("./data/table_json_data_fake_ingestion_data/fakedata.json", "r") as f:
         return json.load(f)
 
+
 @pytest.fixture()
 def create_test_data_df(currency_test_data):
-    return pd.DataFrame(currency_test_data['currency'])
+    return pd.DataFrame(currency_test_data["currency"])
+
 
 class TestCreateDimCurrency:
     def test_dim_currency_function_returns_a_df(self, create_test_data_df):
@@ -31,7 +34,9 @@ class TestCreateDimCurrency:
         assert create_test_data_df.equals(copy_df)
 
     def test_returns_expected_values(self):
-        with open("testing/test_data/test_data_currency.json", "r") as file:
+        with open(
+            "./data/table_json_data_fake_ingestion_data/fakedata.json", "r"
+        ) as file:
             currency_data = json.load(file)
         body = currency_data
         currency_list = body["currency"]
@@ -39,7 +44,7 @@ class TestCreateDimCurrency:
         expected_data = {
             "currency_id": [1, 2, 3],
             "currency_code": ["GBP", "USD", "EUR"],
-            "currency_name": ["Pound Sterling", "US Dollar", "Euro"]
+            "currency_name": ["Pound Sterling", "US Dollar", "Euro"],
         }
         expected_df = pd.DataFrame(expected_data)
         result = create_dim_currency(input_df)
