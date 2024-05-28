@@ -5,7 +5,7 @@ import pandas as pd
 
 @pytest.fixture()
 def currency_test_data():
-    with open("testing/test_data/test_data_currency.json", "r") as f:
+    with open("./data/table_json_data_fake_ingestion_data/fakedata.json", "r") as f:
         return json.load(f)
 
 @pytest.fixture()

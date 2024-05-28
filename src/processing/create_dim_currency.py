@@ -1,6 +1,5 @@
 import pandas as pd
 import json
-import boto3
 
 def grab_currency_conversion_info():
     with open("src/processing/reference_data/currency_information_data.json", "r") as file:
