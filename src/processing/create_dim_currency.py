@@ -2,14 +2,6 @@ import pandas as pd
 import json
 import boto3
 
-
-# with open("testing/test_data/test_data_currency.json", "r") as file:
-#         currency_data = json.load(file)
-# body = currency_data
-# currency_list = body["currency"]
-# df = pd.DataFrame(currency_list)
-
-
 def grab_currency_conversion_info():
     with open("src/processing/reference_data/currency_information_data.json", "r") as file:
         currency_data = json.load(file)
