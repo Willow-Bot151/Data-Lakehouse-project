@@ -72,7 +72,7 @@ def processed_lambda_handler(event={}, context={}):
                 dim_loc = create_dim_location(df_dict['address'])
                 #dim_design = create_dim_design(df_dict['design'])
                 #dim_currency = create_dim_currency(df_dict['currency'])
-                #fact_sales = create_facts_sales()
+                #fact_sales = create_facts_sales(tables, tables, tables)
 
                 # output each dim and fact to parquet function
                 #write_parquet_file_to_s3(file, s3_client, bucket_name, table_name, date_start, date_end)
