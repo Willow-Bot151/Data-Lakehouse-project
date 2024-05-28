@@ -1,16 +1,33 @@
-from .connection import connect_to_db, close_connection
+try:
+    from src.ingestion.utils.test_zip.connection import connect_to_db, close_connection
+except ModuleNotFoundError:
+    from connection import connect_to_db, close_connection
 from datetime import datetime
-from .utils import (
-    init_s3_client,
-    put_object_in_bucket,
-    query_updated_table_information,
-    get_datestamp_from_table,
-    get_current_timestamp,
-    put_timestamp_in_s3,
-    convert_datetimes_and_decimals,
-    add_ts_for_processing_bucket,
-    get_datetime_now,
-)
+
+try:
+    from src.ingestion.utils.test_zip.utils import (
+        init_s3_client,
+        put_object_in_bucket,
+        query_updated_table_information,
+        get_datestamp_from_table,
+        get_current_timestamp,
+        put_timestamp_in_s3,
+        convert_datetimes_and_decimals,
+        add_ts_for_processing_bucket,
+        get_datetime_now,
+    )
+except ModuleNotFoundError:
+    from utils import (
+        init_s3_client,
+        put_object_in_bucket,
+        query_updated_table_information,
+        get_datestamp_from_table,
+        get_current_timestamp,
+        put_timestamp_in_s3,
+        convert_datetimes_and_decimals,
+        add_ts_for_processing_bucket,
+        get_datetime_now,
+    )
 import logging
 from botocore.exceptions import ClientError
 
