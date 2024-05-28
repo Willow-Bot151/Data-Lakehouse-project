@@ -30,4 +30,7 @@ def connect_to_db():
 
 
 def close_connection(conn):
-    conn.close()
+    try:
+        conn.close()
+    except ConnectionError:
+        raise ConnectionError("Failed to close DB connection")
