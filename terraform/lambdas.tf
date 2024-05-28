@@ -67,6 +67,12 @@ data "archive_file" "processing_lambda_data" {
   output_path = "../processing_deploy.zip"
 }
 
+data "archive_file" "processing_dependencies" {
+  type        = "zip"
+  output_file_mode = "0666"
+  source_dir = "../layer_processing"
+  output_path = "../processing_requirements.zip"       
+}
 
 
 resource "aws_lambda_permission" "allow_bucket" {
@@ -81,7 +87,7 @@ resource "aws_lambda_function" "processing_lambda" {
     function_name = "processing_lambda"
     filename = "../processing_deploy.zip"
     role = aws_iam_role.lambda_role.arn 
-    handler = "processing_lambda_handler.test_processing_lambda" #change me
+    handler = "processing_lambda_handler.processed_lambda_handler" #change me
     runtime = var.python_runtime        
     timeout = 60                 # --- consider time taken of ingestion lambda and when this one is triggered
     source_code_hash = data.archive_file.processing_lambda_data.output_base64sha256
@@ -97,6 +103,14 @@ resource "aws_lambda_function_event_invoke_config" "processing_lambda_invoke_con
   qualifier     = "$LATEST"
 }
 
+resource "aws_lambda_layer_version" "processing_dependencies_layer" {
+  layer_name = "processing_dependancies_layer"
+  compatible_runtimes = [var.python_runtime]
+  compatible_architectures = ["x86_64", "arm64"]
+  filename = "../processing_requirements.zip"
+}
+
+#################### COMMENTED OUT PROCESSING BUCKET STUFF ###################
 
 # resource "aws_lambda_permission" "allow_eventbridge_trigger_processing" {
 #   action = "lambda:InvokeFunction"
@@ -108,22 +122,6 @@ resource "aws_lambda_function_event_invoke_config" "processing_lambda_invoke_con
 
 #layer reference for main body if we need extra depedencies
 #aws_lambda_layer_version.processing_dependencies_layer.arn
-
-
-data "archive_file" "processing_dependencies" {
-  type        = "zip"
-  output_file_mode = "0666"
-  source_dir = "../layer_processing"
-  output_path = "../processing_requirements.zip"       
-}
-
-
-resource "aws_lambda_layer_version" "processing_dependencies_layer" {
-  layer_name = "processing_dependancies_layer"
-  compatible_runtimes = [var.python_runtime]
-  compatible_architectures = ["x86_64", "arm64"]
-  filename = "../processing_requirements.zip"
-}
 
 # resource "aws_lambda_permission" "processing_lambda_invoke" {
 #   action = "lambda:InvokeFunction"
