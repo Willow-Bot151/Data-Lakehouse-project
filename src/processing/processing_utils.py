@@ -6,8 +6,7 @@ import botocore
 from botocore.exceptions import ClientError
 
 def df_normalisation(df,table_name):
-    if table_name in df.columns:
-        df_norm = pd.json_normalize(df[table_name])
+    df_norm = pd.json_normalize(df[table_name])
     return df_norm
 
 # purpose to read timestamp from ingestion bucket
@@ -36,7 +35,6 @@ def df_to_parquet(df):
 
 def list_objects_in_bucket(bucket_name,prefix):
     objects = wr.s3.list_objects(f's3://{bucket_name}/{prefix}/')
-    print(objects) 
     return objects
 
 def write_parquet_file_to_s3(file, s3_client, bucket_name, table_name, date_start, date_end):
@@ -53,8 +51,7 @@ def init_s3_client():
         s3_client = session.create_client("s3")
         return s3_client
     except ClientError as e:
-        print("-ERROR- Failure to connect to s3 client, please check credentials")
-        return None
+        raise e("-ERROR- Failure to connect to s3 client, please check credentials")
                 
 
 

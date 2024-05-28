@@ -6,14 +6,14 @@ import json
 
 class TestLocationDimensionTable:
     def test_create_dim_location_returns_dataframe(self):
-         with open("testing/processing/test_data/test_address_json_data.json") as f:
+        with open("data/table_json_data_fake_ingestion_data/fakedata.json") as f:
             ingestion_address = json.load(f)["address"]
-            
+
             dim_location = pd.DataFrame(ingestion_address)
-         assert isinstance(create_dim_location(dim_location),pd.DataFrame)
-        
+        assert isinstance(create_dim_location(dim_location), pd.DataFrame)
+
     def test_create_dim_location_df_address_id_column_renamed_to_location_id(self):
-        with open("testing/processing/test_data/test_address_json_data.json") as f:
+        with open("data/table_json_data_fake_ingestion_data/fakedata.json") as f:
             ingestion_address = json.load(f)["address"]
 
         dim_location = pd.DataFrame(ingestion_address)
@@ -21,9 +21,9 @@ class TestLocationDimensionTable:
 
         assert "address_id" not in dataframe_columns
         assert "location_id" in dataframe_columns
-    
+
     def test_create_dim_location_for_dropped_columns(self):
-        with open("testing/processing/test_data/test_address_json_data.json") as f:
+        with open("data/table_json_data_fake_ingestion_data/fakedata.json") as f:
             ingestion_address = json.load(f)["address"]
 
         dim_location = pd.DataFrame(ingestion_address)
