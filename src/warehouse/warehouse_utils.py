@@ -50,7 +50,7 @@ def run_engine_to_insert_database(engine, input_dict):
     
 def close_connection(conn):
     try:
-        conn.close()
+        conn.dispose()
     except ConnectionError:
         raise ConnectionError("Failed to close DB connection")
     

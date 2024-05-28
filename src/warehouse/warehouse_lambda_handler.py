@@ -20,6 +20,6 @@ def warehouse_lambda_handler(event={}, context=[]):
     secrets = get_aws_secrets
     engine = connect_to_db_engine(secrets=secrets)
     run_engine_to_insert_database(engine=engine, dict=df_dict)
-    
+
     close_connection()
     logger.info("Loaded data from s3 into warehouse successfully")
