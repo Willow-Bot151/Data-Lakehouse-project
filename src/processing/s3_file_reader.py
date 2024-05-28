@@ -32,7 +32,7 @@ def s3_reader_many_files(table):
 
 
 def s3_reader_filtered(table,filtered_files):
-    df = wr.s3.read_json(filtered_files)
+    df = wr.s3.read_json(path=filtered_files)
     if table in df.columns:
         df_norm = df_normalisation(df,table)
         print(df_norm.shape)

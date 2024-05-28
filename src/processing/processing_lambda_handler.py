@@ -65,19 +65,8 @@ def processed_lambda_handler(event={}, context={}):
                         objects=list_objects_in_bucket(ingestion_bucket,table)
                         filtered_files=filter_files_by_timestamp(ingestion_bucket,table,objects, start_time, end_time)
                         df=s3_reader_filtered(table,filtered_files)
-
                         df_dict[table]=df
                 #filter_files_by_timestamp, if there are issues look at putting a / between prefix and key and the implications of doing so :(
-                
-                # processed_table_names = [
-                #     'dim_date',
-                #     'dim_staff',
-                #     'dim_currency',
-                #     'dim_counterparty',
-                #     'dim_design',
-                #     'dim_location',
-                #     'fact_sales_order'
-                #    ]
                 star_schema_tables = dict()
                 # now call each dim_table function, return dim_table as df
                 star_schema_tables['dim_date'] = create_dim_date()
@@ -94,8 +83,8 @@ def processed_lambda_handler(event={}, context={}):
                         write_parquet_file_to_s3(parquet_data, s3_client, processed_bucket, table, start_time, end_time)
 
 
-                date_time = end_time.strftime("%m:%d:%Y-%H:%M:%S")
-                write_timestamp_to_s3(s3_client, processed_bucket, date_time)
+                # date_time = end_time.strftime("%m:%d:%Y-%H:%M:%S")
+                # write_timestamp_to_s3(s3_client, processed_bucket, date_time)
                 response = logger.info("-SUCCESS- Data processed successfully")
                 return response
         # except Exception:
@@ -145,3 +134,4 @@ def processed_lambda_handler(event={}, context={}):
         named 'start' somewhere in timestamp 
 
 '''
+processed_lambda_handler()
