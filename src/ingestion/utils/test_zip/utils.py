@@ -37,8 +37,7 @@ def query_updated_table_information(conn, table, dt):
         query = f"""SELECT *
                     FROM {identifier(table)}
                     WHERE last_updated > {literal(dt)}
-                    ORDER BY last_updated ASC
-                    LIMIT 2;"""
+                    ORDER BY last_updated ASC;"""
         result = conn.run(query)
 
         columns = [col["name"] for col in conn.columns]
@@ -91,7 +90,6 @@ def put_timestamp_in_s3(timestamp, s3_client):
         raise RuntimeError("Check connection and formatting of timestamp")
 
 
-
 def initialise_bucket_with_timestamp(s3_client):
     dt = datetime.datetime(2022, 1, 1, 1, 1, 1, 111111)
     response = s3_client.put_object(
@@ -100,6 +98,7 @@ def initialise_bucket_with_timestamp(s3_client):
         Key=f"timestamp",
     )
     return response
+
 
 def convert_datetimes_and_decimals(unconverted_json):
 
@@ -118,6 +117,7 @@ def add_ts_for_processing_bucket(s3_client, dt_now):
         Body=dt_now, Bucket="nc-team-reveries-ingestion", Key=f"timestamp_start"
     )
     return response
+
 
 def initialise_process_bucket_with_timestamp(s3_client):
     dt = datetime.datetime(2022, 1, 1, 1, 1, 1)

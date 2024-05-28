@@ -30,7 +30,7 @@ class TestDateDimensionTable:
             "day_of_week": "int32",
             "day_name": "object",
             "month_name": "object",
-            "quarter": "period[Q-DEC]",
+            "quarter": "int32",
         }
         df = create_dim_date()
         for col, type in expected_data_types.items():

@@ -3,10 +3,12 @@ from pg8000.native import Connection
 import pytest
 from unittest.mock import patch, MagicMock
 
+
 class TestConnectToDB:
     @pytest.mark.it("Check return of connection type")
     def test_new_connect_to_db_psql_connection(self):
         assert isinstance(connect_to_db(), Connection)
+
 
 class TestCloseConnection:
     @pytest.mark.it("Successfully closes db connection")
@@ -23,4 +25,3 @@ class TestCloseConnection:
 
         with pytest.raises(ConnectionError):
             close_connection(mock_connection)
-        

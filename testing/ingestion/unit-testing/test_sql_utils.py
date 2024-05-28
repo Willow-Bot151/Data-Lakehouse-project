@@ -11,7 +11,7 @@ from src.ingestion.utils.test_zip.utils import (
     put_timestamp_in_s3,
     initialise_bucket_with_timestamp,
     add_ts_for_processing_bucket,
-    initialise_process_bucket_with_timestamp
+    initialise_process_bucket_with_timestamp,
 )
 import datetime
 from unittest.mock import Mock, patch, MagicMock
@@ -26,6 +26,7 @@ import json
 import datetime
 from datetime import datetime as dt_mod
 from decimal import Decimal
+
 
 @pytest.fixture
 def get_table_names():
@@ -58,26 +59,28 @@ def mock_s3_client(aws_creds):
     with mock_aws():
         yield boto3.client("s3")
 
+
 class TestInitS3Client:
 
     @pytest.mark.it("Test client connection success")
-    @patch('botocore.session.get_session')
+    @patch("botocore.session.get_session")
     def test_client_connection(self, mocked_session):
         mock_session_rv = mocked_session.return_value
         mock_client = mock_session_rv.create_client.return_value
         s3_client = init_s3_client()
 
-        assert mock_session_rv.create_client.called_once_with('s3')
+        assert mock_session_rv.create_client.called_once_with("s3")
         assert s3_client == mock_client
-    
+
     @pytest.mark.it("Test client connection failure")
-    @patch('botocore.session.get_session')
+    @patch("botocore.session.get_session")
     def test_client_connection_failure(self, mocked_session):
         mock_session_rv = mocked_session.return_value
         mock_session_rv.create_client.side_effect = Exception
 
         with pytest.raises(ConnectionRefusedError):
             init_s3_client()
+
 
 class TestGetCurrentTimestamp:
     def test_get_currrent_timestamp_returns_a_datetime_object(self, mock_s3_client):
@@ -135,7 +138,6 @@ def mock_conn1():
     return MockConnection()
 
 
-
 class TestQueryUpdatedTableInformation:
 
     def test_query_updated_table_information_returns_correct_data_format(
@@ -160,6 +162,7 @@ class TestQueryUpdatedTableInformation:
             mock_conn1, "test_table", "2024-05-16T11:00:00"
         )
         assert output_table is None
+
 
 class TestPutIntoIndividualTable:
     def test_put_into_individual_table_returns_dict(self):
@@ -249,6 +252,7 @@ class TestPutIntoIndividualTable:
             ]
         }
 
+
 class TestGetDatestampFromTable:
 
     def test_get_datestamp_from_table_returns_timestamp(self):
@@ -279,8 +283,10 @@ class TestGetDatestampFromTable:
         assert test_func == expected
         assert type(test_func) == str
 
+
 class TestGetDatetimeNow:
     pytest.mark.it("Tests get datetime now")
+
     def test_gdtn(self):
         dt = get_datetime_now()
         formatted_dt = dt_mod.strptime(dt, "%m:%d:%Y-%H:%M:%S")
@@ -291,13 +297,22 @@ class TestGetDatetimeNow:
 class TestPutObjectInBucket:
     def test_func_puts_obj_in_s3(self, mock_s3_client):
         table_name = "test_table"
-        individual_table = {table_name: [{"tom:": "cat"},{"tom:": "cat"}, {"date": datetime.datetime(2022, 1, 1, 1, 1, 1, 1).isoformat()}, {"num": str(Decimal(3.14))}]}
+        individual_table = {
+            table_name: [
+                {"tom:": "cat"},
+                {"tom:": "cat"},
+                {"date": datetime.datetime(2022, 1, 1, 1, 1, 1, 1).isoformat()},
+                {"num": str(Decimal(3.14))},
+            ]
+        }
         bucket = "testbucket"
         mock_s3_client.create_bucket(
             Bucket=bucket, CreateBucketConfiguration={"LocationConstraint": "eu-west-2"}
         )
         dt_now = datetime.datetime.now()
-        put_object_in_bucket(table_name, individual_table, mock_s3_client, bucket, dt_now)
+        put_object_in_bucket(
+            table_name, individual_table, mock_s3_client, bucket, dt_now
+        )
         listed_objects = mock_s3_client.list_objects(Bucket=bucket)
         returned_object = mock_s3_client.get_object(
             Bucket=bucket, Key=listed_objects["Contents"][0]["Key"]
@@ -309,6 +324,7 @@ class TestPutObjectInBucket:
 
 class TestPutTimestampInS3:
     pytest.mark.it("Tests for success response from mock AWS")
+
     def test_put_object_into_bucket(self, mock_s3_client):
         mock_s3_client.create_bucket(
             Bucket="nc-team-reveries-ingestion",
@@ -317,9 +333,12 @@ class TestPutTimestampInS3:
         timestamp = datetime.datetime(2022, 1, 1, 1, 1, 1, 1)
         action = put_timestamp_in_s3(timestamp, mock_s3_client)
 
-        assert action['ResponseMetadata']['HTTPStatusCode'] == 200
+        assert action["ResponseMetadata"]["HTTPStatusCode"] == 200
 
-    pytest.mark.it("Tests raise connection error for failure of timestamp input due to no isoformat attr")
+    pytest.mark.it(
+        "Tests raise connection error for failure of timestamp input due to no isoformat attr"
+    )
+
     def test_put_object_into_bucket(self, mock_s3_client):
         mock_s3_client.create_bucket(
             Bucket="nc-team-reveries-ingestion",
@@ -328,9 +347,11 @@ class TestPutTimestampInS3:
         timestamp = "good morning"
         with pytest.raises(RuntimeError):
             print(put_timestamp_in_s3(timestamp, mock_s3_client))
-        
+
+
 class TestInitBucketWithTimestamp:
     pytest.mark.it("Tests status code 200 when running function")
+
     def test_put_timestamp_into_bucket(self, mock_s3_client):
         mock_s3_client.create_bucket(
             Bucket="nc-team-reveries-ingestion",
@@ -338,19 +359,62 @@ class TestInitBucketWithTimestamp:
         )
         action = initialise_bucket_with_timestamp(mock_s3_client)
 
-        assert action['ResponseMetadata']['HTTPStatusCode'] == 200
+        assert action["ResponseMetadata"]["HTTPStatusCode"] == 200
+
 
 class TestConvertDatetimesAndDecimals:
     pytest.mark.it("Converts data formats of datetime and decimal to str")
+
     def test_converts_dt_and_deci_format(self):
-        data = {'transaction': [{'transaction_id': 1, 'transaction_type': 'PURCHASE', 'sales_order_id': None, 'purchase_order_id': 2, 'created_at': datetime.datetime(2022, 11, 3, 14, 20, 52, 186000), 'last_updated': datetime.datetime(2022, 11, 3, 14, 20, 52, 186000)}, {'transaction_id': 3, 'transaction_type': 'SALE', 'sales_order_id': 1, 'purchase_order_id': None, 'created_at': datetime.datetime(2022, 11, 3, 14, 20, 52, 186000), 'last_updated': datetime.datetime(2022, 11, 3, 14, 20, 52, 186000)}]}
+        data = {
+            "transaction": [
+                {
+                    "transaction_id": 1,
+                    "transaction_type": "PURCHASE",
+                    "sales_order_id": None,
+                    "purchase_order_id": 2,
+                    "created_at": datetime.datetime(2022, 11, 3, 14, 20, 52, 186000),
+                    "last_updated": datetime.datetime(2022, 11, 3, 14, 20, 52, 186000),
+                },
+                {
+                    "transaction_id": 3,
+                    "transaction_type": "SALE",
+                    "sales_order_id": 1,
+                    "purchase_order_id": None,
+                    "created_at": datetime.datetime(2022, 11, 3, 14, 20, 52, 186000),
+                    "last_updated": datetime.datetime(2022, 11, 3, 14, 20, 52, 186000),
+                },
+            ]
+        }
         result = convert_datetimes_and_decimals(data)
-        expected = {'transaction': [{'transaction_id': 1, 'transaction_type': 'PURCHASE', 'sales_order_id': None, 'purchase_order_id': 2, 'created_at': '2022-11-03T14:20:52.186000', 'last_updated': '2022-11-03T14:20:52.186000'}, {'transaction_id': 3, 'transaction_type': 'SALE', 'sales_order_id': 1, 'purchase_order_id': None, 'created_at': '2022-11-03T14:20:52.186000', 'last_updated': '2022-11-03T14:20:52.186000'}]}
+        expected = {
+            "transaction": [
+                {
+                    "transaction_id": 1,
+                    "transaction_type": "PURCHASE",
+                    "sales_order_id": None,
+                    "purchase_order_id": 2,
+                    "created_at": "2022-11-03T14:20:52.186000",
+                    "last_updated": "2022-11-03T14:20:52.186000",
+                },
+                {
+                    "transaction_id": 3,
+                    "transaction_type": "SALE",
+                    "sales_order_id": 1,
+                    "purchase_order_id": None,
+                    "created_at": "2022-11-03T14:20:52.186000",
+                    "last_updated": "2022-11-03T14:20:52.186000",
+                },
+            ]
+        }
         assert result == expected
 
 
 class TestAddTSToProcessing:
-    pytest.mark.it("Checks status code of 200 when setting timestamp in processing bucket")
+    pytest.mark.it(
+        "Checks status code of 200 when setting timestamp in processing bucket"
+    )
+
     def test_put_timestamp_into_proc_bucket(self, mock_s3_client):
         mock_s3_client.create_bucket(
             Bucket="nc-team-reveries-ingestion",
@@ -359,11 +423,14 @@ class TestAddTSToProcessing:
         dt = datetime.datetime(2024, 1, 1, 1, 1, 1, 1)
         action = add_ts_for_processing_bucket(mock_s3_client, dt_now=dt.isoformat())
 
-        assert action['ResponseMetadata']['HTTPStatusCode'] == 200
+        assert action["ResponseMetadata"]["HTTPStatusCode"] == 200
 
-    
+
 class TestInitProcessingBucketWithTimeStamp:
-    pytest.mark.it("Checks status code of 200 when setting init timestamp in processing bucket")
+    pytest.mark.it(
+        "Checks status code of 200 when setting init timestamp in processing bucket"
+    )
+
     def test_put_init_timestamp_into_proc_bucket(self, mock_s3_client):
         mock_s3_client.create_bucket(
             Bucket="nc-team-reveries-processing",
@@ -371,4 +438,4 @@ class TestInitProcessingBucketWithTimeStamp:
         )
         action = initialise_process_bucket_with_timestamp(mock_s3_client)
 
-        assert action['ResponseMetadata']['HTTPStatusCode'] == 200
+        assert action["ResponseMetadata"]["HTTPStatusCode"] == 200

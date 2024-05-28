@@ -124,7 +124,7 @@ class TestExtractAndFilterTimestampFromKey:
             "s3://nc-team-reveries-ingestion/transaction/--05:22:2024-08:28:23--purchase_order-data",
         ]
         bucket_name = "nc-team-reveries-ingestion"
-        prefix = "transaction/"
+        prefix = "transaction"
         result = filter_files_by_timestamp(
             bucket_name, prefix, mock_list_objects.return_value, start_time, end_time
         )

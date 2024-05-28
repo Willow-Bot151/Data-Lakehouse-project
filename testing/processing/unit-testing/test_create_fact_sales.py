@@ -1,4 +1,4 @@
-from src.processing.create_fact_sales import fact_sales
+from src.processing.create_fact_sales import create_fact_sales
 import json
 import pytest
 import pandas as pd
@@ -33,17 +33,17 @@ def make_test_sales_data(create_test_data_df):
 
 class TestFactSales:
     def test_func_returns_df(self, make_test_sales_data):
-        result = fact_sales(make_test_sales_data)
+        result = create_fact_sales(make_test_sales_data)
         assert isinstance(result, pd.DataFrame)
 
     def test_func_doesnt_mutate_input(self, make_test_sales_data):
         data_copy = make_test_sales_data.copy(deep=True)
-        fact_sales(make_test_sales_data)
+        create_fact_sales(make_test_sales_data)
         assert make_test_sales_data.equals(data_copy)
 
     def test_no_lost_rows(self, make_test_sales_data):
         rows = make_test_sales_data.shape[0]
-        result = fact_sales(make_test_sales_data)
+        result = create_fact_sales(make_test_sales_data)
         fact_table_rows = result.shape[0]
         assert rows == fact_table_rows
 
@@ -64,7 +64,7 @@ class TestFactSales:
             "agreed_delivery_date",
             "agreed_delivery_location_id",
         }
-        result = fact_sales(make_test_sales_data)
+        result = create_fact_sales(make_test_sales_data)
         assert set(result.columns) == expected_columns
 
     def test_function_produces_expected_results(self):
@@ -107,6 +107,6 @@ class TestFactSales:
             ]
         )
         print(expected)
-        result = fact_sales(input)
+        result = create_fact_sales(input)
         print(result)
         assert result.equals(expected)
