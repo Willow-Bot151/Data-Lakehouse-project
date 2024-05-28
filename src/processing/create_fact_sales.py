@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import datetime, date, time
 
-def fact_sales(sales_order_df):
+def create_fact_sales(sales_order_df):
     copied_sales_order = sales_order_df.copy(deep=True)
     renamed_sales_order = copied_sales_order.rename(columns={"staff_id":"sales_staff_id"})
     renamed_sales_order['created_date'] = renamed_sales_order['created_at'].apply(
