@@ -1,5 +1,6 @@
 import pandas as pd
 from datetime import datetime, date, time
+from decimal import Decimal
 
 def create_fact_sales(sales_order_df):
     copied_sales_order = sales_order_df.copy(deep=True)
@@ -21,6 +22,9 @@ def create_fact_sales(sales_order_df):
         )
     renamed_sales_order['agreed_payment_date'] = renamed_sales_order['agreed_payment_date'].apply(
         lambda x: datetime.fromisoformat(x).date()
+        )
+    renamed_sales_order['unit_price'] = renamed_sales_order['unit_price'].apply(
+        lambda x: Decimal(x)
         )
     filtered_df = renamed_sales_order.drop(columns = ['created_at','last_updated'])
     result_df = filtered_df.reindex([

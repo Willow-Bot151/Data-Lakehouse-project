@@ -142,9 +142,9 @@ resource "aws_lambda_function" "warehouse_lambda" {
     filename = "../warehouse_deploy.zip"
     role = aws_iam_role.warehouse_lambda_role.arn 
     handler = "warehouse_lambda_handler.warehouse_lambda_handler"
-    memory_size   = 128
+    memory_size   = 1024
     runtime = var.python_runtime        
-    timeout = 60            
+    timeout = 180            
     source_code_hash = data.archive_file.warehouse_lambda_data.output_base64sha256
     layers = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python311:12", aws_lambda_layer_version.warehouse_dependencies_layer.arn] 
 }

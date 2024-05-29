@@ -3,6 +3,7 @@ import json
 import pytest
 import pandas as pd
 from datetime import date, time, datetime
+from decimal import Decimal
 
 """
 test returns df
@@ -98,7 +99,7 @@ class TestFactSales:
                     "sales_staff_id": 18,
                     "counterparty_id": 4,
                     "units_sold": 49659,
-                    "unit_price": "2.41",
+                    "unit_price": Decimal("2.41"),
                     "currency_id": 3,
                     "design_id": 7,
                     "agreed_payment_date": date.fromisoformat("2022-11-08"),
@@ -107,7 +108,5 @@ class TestFactSales:
                 }
             ]
         )
-        print(expected)
         result = create_fact_sales(input)
-        print(result)
         assert result.equals(expected)

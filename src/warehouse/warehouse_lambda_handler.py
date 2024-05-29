@@ -24,5 +24,3 @@ def warehouse_lambda_handler(event={}, context=[]):
 
     close_connection(engine)
     logger.info("Loaded data from s3 into warehouse successfully")
-
-warehouse_lambda_handler()
