@@ -80,8 +80,8 @@ def processed_lambda_handler(event={}, context={}):
                         write_parquet_file_to_s3(parquet_data, s3_client, processed_bucket, table, start_time, end_time)
 
 
-                # date_time = end_time.strftime("%m:%d:%Y-%H:%M:%S")
-                # write_timestamp_to_s3(s3_client, processed_bucket, date_time)
+                date_time = end_time.strftime("%m:%d:%Y-%H:%M:%S")
+                write_timestamp_to_s3(s3_client, processed_bucket, date_time)
                 response = logger.info("-SUCCESS- Data processed successfully")
                 return response
         except Exception:
