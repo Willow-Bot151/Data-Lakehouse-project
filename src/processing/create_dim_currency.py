@@ -2,10 +2,15 @@ import pandas as pd
 import json
 
 def grab_currency_conversion_info():
-    with open("src/processing/reference_data/currency_information_data.json", "r") as file:
-        currency_data = json.load(file)
-        return currency_data
-
+    try:
+        with open("src/processing/currency_information_data.json", "r") as file:
+            currency_data = json.load(file)
+            return currency_data
+    except FileNotFoundError:
+        with open("currency_information_data.json", "r") as file:
+            currency_data = json.load(file)
+            return currency_data
+        
 def create_dim_currency(df):
     
     currency_dict = grab_currency_conversion_info()

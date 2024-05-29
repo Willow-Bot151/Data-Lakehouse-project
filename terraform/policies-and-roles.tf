@@ -20,36 +20,10 @@ resource "aws_iam_role" "lambda_role" {
     EOF
 }
 
-resource "aws_iam_role" "processing_lambda_role" {
-    name_prefix = "role-${var.Processing_lambda}"
-    assume_role_policy = <<EOF
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Action": [
-                    "sts:AssumeRole"
-                ],
-                "Principal": {
-                    "Service": [
-                        "lambda.amazonaws.com"
-                    ]
-                }
-            }
-        ]
-    }
-    EOF
-}
-
 data "aws_iam_policy_document" "s3_document" {
   statement {
 
-    actions = ["s3:PutObject",
-               "s3:GetObject",
-               "s3:ListBucket",
-               "s3:ListAllMyBuckets",
-               "s3:DeleteObject"]
+    actions = ["*"]
 
     resources = [
       "${aws_s3_bucket.ingestion_bucket.arn}/*",
@@ -100,12 +74,6 @@ resource "aws_iam_policy" "cw_policy" {
     policy = data.aws_iam_policy_document.cw_document.json
 }
 
-resource "aws_iam_policy" "processing_cw_policy" {
-    name_prefix = "cw-policy-${var.Processing_lambda}"
-    policy = data.aws_iam_policy_document.cw_document.json
-}
-
-
 resource "aws_iam_policy" "secrets_policy" {
     name_prefix = "secrets-policy-${var.lambda_name}"
     policy = data.aws_iam_policy_document.ingestion_secrets_policy_document.json
@@ -121,15 +89,77 @@ resource "aws_iam_role_policy_attachment" "lambda_cw_policy_attachment" {
     policy_arn = aws_iam_policy.cw_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "processing_lambda_cw_policy_attachment" {
-    role = aws_iam_role.processing_lambda_role.name
-    policy_arn = aws_iam_policy.cw_policy.arn
-}
 
 resource "aws_iam_role_policy_attachment" "lambda_secrets_policy_attachment" {
     role = aws_iam_role.lambda_role.name
     policy_arn = aws_iam_policy.secrets_policy.arn
 }
+
+
+#----------------------------------------------------------------------------------------------------------------------------
+#---------------------------PROCESSING-TERRAFORM-----------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------
+
+resource "aws_iam_role" "processing_lambda_role" {
+    name_prefix = "role-${var.Processing_lambda}"
+    assume_role_policy = <<EOF
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "sts:AssumeRole"
+                ],
+                "Principal": {
+                    "Service": [
+                        "lambda.amazonaws.com"
+                    ]
+                }
+            }
+        ]
+    }
+    EOF
+}
+
+#--------------------------------s3-POLICY---------------------------------------
+
+data "aws_iam_policy_document" "processing_s3_document" {
+  statement {
+
+    actions = ["*"]
+
+    resources = [
+        "${aws_s3_bucket.ingestion_bucket.arn}",
+        "${aws_s3_bucket.ingestion_bucket.arn}/*",
+        "${aws_s3_bucket.processing_bucket.arn}",
+        "${aws_s3_bucket.processing_bucket.arn}/*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "processing_s3_policy" {
+    name_prefix = "s3-policy-${var.Processing_lambda}"
+    policy = data.aws_iam_policy_document.processing_s3_document.json
+}
+
+resource "aws_iam_role_policy_attachment" "processing_lambda_s3_policy_attachment" {
+    role = aws_iam_role.processing_lambda_role.name
+    policy_arn = aws_iam_policy.processing_s3_policy.arn
+}
+
+
+resource "aws_iam_policy" "processing_cw_policy" {
+    name_prefix = "cw-policy-${var.Processing_lambda}"
+    policy = data.aws_iam_policy_document.cw_document.json
+}
+
+resource "aws_iam_role_policy_attachment" "processing_lambda_cw_policy_attachment" {
+    role = aws_iam_role.processing_lambda_role.name
+    policy_arn = aws_iam_policy.cw_policy.arn
+}
+
+
 
 # resource "aws_secretsmanager_secret" "get_aws_secrets_ingestion" {
 #   name = "aws_secrets_ingestion"

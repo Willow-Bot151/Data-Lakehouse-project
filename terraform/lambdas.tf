@@ -86,8 +86,9 @@ resource "aws_lambda_permission" "allow_bucket" {
 resource "aws_lambda_function" "processing_lambda" {
     function_name = "processing_lambda"
     filename = "../processing_deploy.zip"
-    role = aws_iam_role.lambda_role.arn 
+    role = aws_iam_role.processing_lambda_role.arn 
     handler = "processing_lambda_handler.processed_lambda_handler" #change me
+    memory_size   = 1024 
     runtime = var.python_runtime        
     timeout = 900                # --- consider time taken of ingestion lambda and when this one is triggered
     source_code_hash = data.archive_file.processing_lambda_data.output_base64sha256

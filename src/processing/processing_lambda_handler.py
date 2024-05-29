@@ -66,16 +66,25 @@ def processed_lambda_handler(event={}, context={}):
                         filtered_files=filter_files_by_timestamp(ingestion_bucket,table,objects, start_time, end_time)
                         df=s3_reader_filtered(table,filtered_files)
                         df_dict[table]=df
+                        print(df_dict)
+                        logger.info("Processed %s table", table)
                 #filter_files_by_timestamp, if there are issues look at putting a / between prefix and key and the implications of doing so :(
                 star_schema_tables = dict()
                 # now call each dim_table function, return dim_table as df
                 star_schema_tables['dim_date'] = create_dim_date()
+                logger.info("Dim Date processed.")
                 star_schema_tables['dim_counterparty'] = create_dim_counterparty(df_dict['address'], df_dict['counterparty'])
+                logger.info("Dim Counterparty processed.")
                 star_schema_tables['dim_staff'] = create_dim_staff(df_dict['staff'],df_dict['department'])
+                logger.info("Dim Staff processed.")
                 star_schema_tables['dim_location'] = create_dim_location(df_dict['address'])
+                logger.info("Dim Location processed.")
                 star_schema_tables['dim_design'] = create_dim_design(df_dict['design'])
+                logger.info("Dim Design processed.")
                 star_schema_tables['dim_currency'] = create_dim_currency(df_dict['currency'])
+                logger.info("Dim Currency processed.")
                 star_schema_tables['fact_sales_order'] = create_fact_sales(df_dict['sales_order'])
+                logger.info("Fact Sales Order processed.")
 
                 # output to parquet function
                 for table,df in star_schema_tables.items():

@@ -69,3 +69,4 @@ def initialise_processing_bucket_with_timestamp(s3_client):
         Bucket="nc-team-reveries-processing",
         Key=f"timestamp",
     )
+
