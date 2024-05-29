@@ -49,7 +49,7 @@ data "aws_iam_policy_document" "s3_document" {
                "s3:GetObject",
                "s3:ListBucket",
                "s3:ListAllMyBuckets",
-               "s3:DeleteObject",]
+               "s3:DeleteObject"]
 
     resources = [
       "${aws_s3_bucket.ingestion_bucket.arn}/*",
