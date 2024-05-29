@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 def create_dataframe_dictionaries(table_list):
     df_dict = {}
     for table in table_list:
-        key_data_df = wr.s3.read_parquet(path=f's3://nc-team-reveries-processing/dim_date/')
+        key_data_df = wr.s3.read_parquet(path=f's3://nc-team-reveries-processing/{table}/')
         df_dict[table] = key_data_df
     return df_dict
     

@@ -17,7 +17,7 @@ def warehouse_lambda_handler(event={}, context=[]):
     
     df_dict = create_dataframe_dictionaries(table_list)
 
-    secrets = get_aws_secrets
+    secrets = get_aws_secrets()
     engine = connect_to_db_engine(secrets=secrets)
     run_engine_to_insert_database(engine=engine, dict=df_dict)
 
