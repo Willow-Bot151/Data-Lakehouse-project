@@ -1,3 +1,7 @@
+#----------------------------------------------------------------------------------------------------------------------------
+#---------------------------INGESTION-TERRAFORM-----------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------
+
 data "archive_file" "dependancies" {
   type = "zip"
   output_file_mode = "0666"
@@ -18,12 +22,11 @@ resource "aws_lambda_function" "ingestion_lambda" {
     role = aws_iam_role.lambda_role.arn
     handler = "ingestion_lambda_handler.ingestion_lambda_handler"       
     runtime = var.python_runtime        
-    timeout = 60                               # --- might need to be changed for first ingestion pull of all tables
+    timeout = 60
     source_code_hash = data.archive_file.ingestion_lambda_file.output_base64sha256
     layers = [aws_lambda_layer_version.dependancies_layer.arn]
     
 }
-
 
 resource "aws_lambda_permission" "lambda_invoke" {
   action = "lambda:InvokeFunction"
@@ -96,9 +99,8 @@ resource "aws_lambda_function" "processing_lambda" {
     
 }
 
-
 resource "aws_lambda_function_event_invoke_config" "processing_lambda_invoke_config" {
-  function_name                = aws_lambda_function.processing_lambda.function_name 
+  function_name                = aws_lambda_function.processing_lambda.function_name
   maximum_event_age_in_seconds = 60
   maximum_retry_attempts       = 0
   qualifier     = "$LATEST"
