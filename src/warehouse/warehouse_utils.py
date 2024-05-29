@@ -9,6 +9,7 @@ def create_dataframe_dictionaries(table_list):
     df_dict = {}
     for table in table_list:
         key_data_df = wr.s3.read_parquet(path=f's3://nc-team-reveries-processing/{table}/')
+        key_data_df.drop_duplicates(inplace=True)
         df_dict[table] = key_data_df
     return df_dict
     
@@ -42,7 +43,7 @@ def run_engine_to_insert_database(engine, input_dict):
     with engine.begin() as connection:
             for dataframe_name, dataframe in input_dict.items():
                 if dataframe_name == 'fact_sales_order':
-                    dataframe.to_sql(name=dataframe_name, con=connection, if_exists='append', index=True)
+                    dataframe.to_sql(name=dataframe_name, con=connection, if_exists='append', index=False)
                 else:    
                     dataframe.to_sql(name=dataframe_name, con=connection, if_exists='append', index=False)
                 success_message = "Succesfully moved dataframe rows to SQL database"
