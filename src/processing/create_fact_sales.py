@@ -24,7 +24,7 @@ def create_fact_sales(sales_order_df):
         lambda x: datetime.fromisoformat(x).date()
         )
     renamed_sales_order['unit_price'] = renamed_sales_order['unit_price'].apply(
-        lambda x: Decimal(x)
+        pd.to_numeric, errors= 'coerce'
         )
     filtered_df = renamed_sales_order.drop(columns = ['created_at','last_updated'])
     result_df = filtered_df.reindex([
