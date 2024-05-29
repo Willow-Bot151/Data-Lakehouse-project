@@ -10,35 +10,6 @@ resource "aws_s3_bucket_versioning" "example" {
   }
 }
 
-# resource "aws_s3_bucket_notification" "ingestion_lambda_trigger" {
-#   bucket = aws_s3_bucket.ingestion_bucket.id
-
-#   lambda_function {
-#     lambda_function_arn = aws_lambda_function.ingestion_lambda.arn
-#     events              = ["s3:ObjectCreated:*"]
-#   }
-
-#   depends_on = [aws_lambda_permission.allow_eventbridge]
-# }
-# this is to trigger the processing lambda, not sure if it runs concurrently/asynchronously, find out tomorrow!
-
-# resource "aws_s3_bucket_notification" "aws-lambda-trigger" {
-# bucket = "${aws_s3_bucket.ingestion_bucket.id}"
-# lambda_function {
-# lambda_function_arn = "${aws_lambda_function.processing_lambda.arn}"
-# events              = ["s3:ObjectCreated:*"]
-# filter_prefix       = "file-prefix"
-# filter_suffix       = "file-extension"
-# }
-# }
-
-# resource "aws_lambda_permission" "test" {
-# statement_id  = "AllowS3Invoke"
-# action        = "lambda:InvokeFunction"
-# function_name = "${aws_lambda_function.test_lambda.function_name}"
-# principal = "s3.amazonaws.com"
-# source_arn = "arn:aws:s3:::${aws_s3_bucket.bucket.id}"
-# }
 #----------------------------------------------------------------------------------------------------------------------------
 #---------------------------PROCESSING-TERRAFORM-----------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------
@@ -60,6 +31,23 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.processing_lambda.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = "timestamp"
+  }
+
+  depends_on = [aws_lambda_permission.allow_bucket]
+}
+
+#----------------------------------------------------------------------------------------------------------------------------
+#---------------------------PROCESSING-TERRAFORM-----------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------
+
+
+resource "aws_s3_bucket_notification" "processing_bucket_notification" {
+  bucket = aws_s3_bucket.processing_bucket.id
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.warehouse_lambda.arn
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = "timestamp"
   }
