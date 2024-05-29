@@ -3,7 +3,8 @@ from warehouse_utils import (
                              close_connection, 
                              create_dataframe_dictionaries, 
                              connect_to_db_engine, 
-                             run_engine_to_insert_database)
+                             run_engine_to_insert_database,
+                             delete_rows_from_warehouse)
 import logging
 
 
@@ -21,6 +22,7 @@ def warehouse_lambda_handler(event={}, context=[]):
     # print(df_dict)
     secrets = get_aws_secrets()
     engine = connect_to_db_engine(secrets=secrets)
+    delete_rows_from_warehouse(engine=engine)
     run_engine_to_insert_database(engine=engine, input_dict=df_dict)
 
     close_connection(engine)

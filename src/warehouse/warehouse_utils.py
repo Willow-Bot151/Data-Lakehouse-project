@@ -42,13 +42,29 @@ def connect_to_db_engine(secrets):
 def run_engine_to_insert_database(engine, input_dict):
     with engine.begin() as connection:
             for dataframe_name, dataframe in input_dict.items():
-                metadata = MetaData()
-                my_table = Table(dataframe_name, metadata)
-                connection.execute(my_table.delete())
+                # metadata = MetaData()
+                # my_table = Table(dataframe_name, metadata)
+                # connection.execute(my_table.delete())
                 dataframe.to_sql(name=dataframe_name, con=connection, if_exists='append', index=False)
                 success_message = "Succesfully moved dataframe rows to SQL database"
             return success_message
-    
+
+def delete_rows_from_warehouse(engine):
+    tables = [
+        'fact_sales_order',
+        'dim_date', 
+        'dim_design', 
+        'dim_currency', 
+        'dim_counterparty', 
+        'dim_staff', 
+        'dim_location'
+    ]
+    for table in tables:
+        with engine.begin() as connection:
+            metadata = MetaData()
+            my_table = Table(table, metadata)
+            connection.execute(my_table.delete())
+
 def close_connection(conn):
     try:
         conn.dispose()
