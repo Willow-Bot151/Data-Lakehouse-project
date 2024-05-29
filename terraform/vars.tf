@@ -8,6 +8,11 @@ variable "Processing_lambda" {
   default = "processing_lambda"
 }
 
+variable "warehouse_lambda" {
+  type = string
+  default = "warehouse_lambda"
+}
+
 variable "aws_region" {
   type = string
   default = "eu-west-2"
