@@ -46,7 +46,7 @@ class TestCreateDimCounterparty:
             "counterparty_id",
             "counterparty_legal_name",
             "counterparty_legal_address_line_1",
-            "counterparty_legal_address_line2",
+            "counterparty_legal_address_line_2",
             "counterparty_legal_district",
             "counterparty_legal_city",
             "counterparty_legal_postal_code",
@@ -90,8 +90,8 @@ class TestCreateDimCounterparty:
             "postal_code": "28441",
             "country": "Turkey",
             "phone": "1803 637401",
-            "created_at": "2022-11-03T14:20:49.962000",
-            "last_updated": "2022-11-03T14:20:49.962000",
+            "created_at": "2022-11-03T14:20:51.563000",
+            "last_updated": "2022-11-03T14:20:51.563000",
         }
         input_address = pd.DataFrame([address_data])
         print(input_counterparty, input_address)
@@ -101,7 +101,7 @@ class TestCreateDimCounterparty:
                     "counterparty_id": 1,
                     "counterparty_legal_name": "Fahey and Sons",
                     "counterparty_legal_address_line_1": "6826 Herzog Via",
-                    "counterparty_legal_address_line2": None,
+                    "counterparty_legal_address_line_2": None,
                     "counterparty_legal_district": "Avon",
                     "counterparty_legal_city": "New Patienceburgh",
                     "counterparty_legal_postal_code": "28441",
