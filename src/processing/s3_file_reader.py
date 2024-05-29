@@ -3,7 +3,10 @@ import json
 import datetime
 import pandas as pd
 import awswrangler as wr
-from src.processing.processing_utils import df_normalisation
+try:
+    from src.processing.processing_utils import df_normalisation
+except ModuleNotFoundError:
+    from processing_utils import df_normalisation
 
 def s3_file_reader_local(input):
     data=input['transaction']

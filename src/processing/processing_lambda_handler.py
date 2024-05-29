@@ -1,16 +1,4 @@
 try:
-        from create_dim_date import create_dim_date
-        from create_dim_counterparty import create_dim_counterparty
-        from create_dim_location import create_dim_location
-        from create_dim_staff import create_dim_staff
-        from create_dim_design import create_dim_design
-        from create_fact_sales import create_fact_sales
-        from create_dim_currency import create_dim_currency, grab_currency_conversion_info
-        from processing_utils import df_to_parquet, init_s3_client,  write_timestamp_to_s3, \
-                read_timestamp_from_s3, write_parquet_file_to_s3,filter_files_by_timestamp, \
-                list_objects_in_bucket
-        from s3_file_reader import s3_reader_many_files, s3_reader_filtered
-except ModuleNotFoundError:
         from src.processing.create_dim_date import create_dim_date
         from src.processing.create_dim_counterparty import create_dim_counterparty
         from src.processing.create_dim_location import create_dim_location
@@ -22,6 +10,18 @@ except ModuleNotFoundError:
                         read_timestamp_from_s3, write_parquet_file_to_s3,filter_files_by_timestamp, \
                         list_objects_in_bucket
         from src.processing.s3_file_reader import s3_reader_many_files, s3_reader_filtered
+except ModuleNotFoundError:
+        from create_dim_date import create_dim_date
+        from create_dim_counterparty import create_dim_counterparty
+        from create_dim_location import create_dim_location
+        from create_dim_staff import create_dim_staff
+        from create_dim_design import create_dim_design
+        from create_fact_sales import create_fact_sales
+        from create_dim_currency import create_dim_currency, grab_currency_conversion_info
+        from processing_utils import df_to_parquet, init_s3_client,  write_timestamp_to_s3, \
+                read_timestamp_from_s3, write_parquet_file_to_s3,filter_files_by_timestamp, \
+                list_objects_in_bucket
+        from s3_file_reader import s3_reader_many_files, s3_reader_filtered
         
 import botocore
 import datetime

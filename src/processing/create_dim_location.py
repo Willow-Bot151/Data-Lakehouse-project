@@ -1,6 +1,6 @@
 import pandas as pd
 import json
-from src.processing.processing_utils import df_to_parquet,write_parquet_file_to_s3
+
 '''
 final columns needed:
         location_id             primary key to be added

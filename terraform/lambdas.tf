@@ -70,7 +70,7 @@ data "archive_file" "processing_lambda_data" {
 data "archive_file" "processing_dependencies" {
   type        = "zip"
   output_file_mode = "0666"
-  source_dir = "../layer_processing"
+  source_dir = "../processing_layer"
   output_path = "../processing_requirements.zip"       
 }
 
@@ -89,9 +89,9 @@ resource "aws_lambda_function" "processing_lambda" {
     role = aws_iam_role.lambda_role.arn 
     handler = "processing_lambda_handler.processed_lambda_handler" #change me
     runtime = var.python_runtime        
-    timeout = 60                 # --- consider time taken of ingestion lambda and when this one is triggered
+    timeout = 900                # --- consider time taken of ingestion lambda and when this one is triggered
     source_code_hash = data.archive_file.processing_lambda_data.output_base64sha256
-    layers = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python311:12",aws_lambda_layer_version.processing_dependancies_layer.arn] #think about account name/id if this doesn't work
+    layers = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python311:12", aws_lambda_layer_version.processing_dependencies_layer.arn] #think about account name/id if this doesn't work
     
 }
 
