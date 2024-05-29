@@ -13,8 +13,8 @@ logger.setLevel(logging.INFO)
 def warehouse_lambda_handler(event={}, context=[]):
     logger.info("Running warehouse lambda handler...")
 
-    #table_list = ['dim_date', 'dim_design', 'dim_currency', 'dim_counterparty', 'dim_staff', 'dim_location', 'fact_sales_order']
-    table_list = ['fact_sales_order']
+    table_list = ['dim_date', 'dim_design', 'dim_currency', 'dim_counterparty', 'dim_staff', 'dim_location', 'fact_sales_order']
+    # table_list = ['fact_sales_order']
 
     df_dict = create_dataframe_dictionaries(table_list)
     # print(df_dict)
