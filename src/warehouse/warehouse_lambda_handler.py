@@ -6,6 +6,7 @@ from warehouse_utils import (
                              run_engine_to_insert_database)
 import logging
 
+
 logger = logging.getLogger("Ingestion Lambda Log")
 logging.basicConfig()
 logger.setLevel(logging.INFO)
