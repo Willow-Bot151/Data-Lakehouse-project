@@ -5,16 +5,22 @@ def create_fact_sales(sales_order_df):
     copied_sales_order = sales_order_df.copy(deep=True)
     renamed_sales_order = copied_sales_order.rename(columns={"staff_id":"sales_staff_id"})
     renamed_sales_order['created_date'] = renamed_sales_order['created_at'].apply(
-        lambda x: datetime.fromisoformat(x).date().isoformat()
+        lambda x: datetime.fromisoformat(x).date()
         )
     renamed_sales_order['created_time'] = renamed_sales_order['created_at'].apply(
-        lambda x: datetime.fromisoformat(x).time().isoformat()
+        lambda x: datetime.fromisoformat(x).time()
         )
     renamed_sales_order['last_updated_date'] = renamed_sales_order['last_updated'].apply(
-        lambda x: datetime.fromisoformat(x).date().isoformat()
+        lambda x: datetime.fromisoformat(x).date()
         )
     renamed_sales_order['last_updated_time'] = renamed_sales_order['last_updated'].apply(
-        lambda x: datetime.fromisoformat(x).time().isoformat()
+        lambda x: datetime.fromisoformat(x).time()
+        )
+    renamed_sales_order['agreed_delivery_date'] = renamed_sales_order['agreed_delivery_date'].apply(
+        lambda x: datetime.fromisoformat(x).date()
+        )
+    renamed_sales_order['agreed_payment_date'] = renamed_sales_order['agreed_payment_date'].apply(
+        lambda x: datetime.fromisoformat(x).date()
         )
     filtered_df = renamed_sales_order.drop(columns = ['created_at','last_updated'])
     result_df = filtered_df.reindex([

@@ -2,6 +2,7 @@ from src.processing.create_fact_sales import create_fact_sales
 import json
 import pytest
 import pandas as pd
+from datetime import date, time, datetime
 
 """
 test returns df
@@ -90,18 +91,18 @@ class TestFactSales:
             [
                 {
                     "sales_order_id": 5,
-                    "created_date": "2022-11-03",
-                    "created_time": "14:20:52.186000",
-                    "last_updated_date": "2022-11-03",
-                    "last_updated_time": "14:20:52.186000",
+                    "created_date": date.fromisoformat("2022-11-03"),
+                    "created_time": time.fromisoformat("14:20:52.186000"),
+                    "last_updated_date": date.fromisoformat("2022-11-03"),
+                    "last_updated_time": time.fromisoformat("14:20:52.186000"),
                     "sales_staff_id": 18,
                     "counterparty_id": 4,
                     "units_sold": 49659,
                     "unit_price": "2.41",
                     "currency_id": 3,
                     "design_id": 7,
-                    "agreed_payment_date": "2022-11-08",
-                    "agreed_delivery_date": "2022-11-05",
+                    "agreed_payment_date": date.fromisoformat("2022-11-08"),
+                    "agreed_delivery_date": date.fromisoformat("2022-11-05"),
                     "agreed_delivery_location_id": 25,
                 }
             ]
