@@ -2,7 +2,7 @@ import pandas as pd
 from datetime import datetime, date, time
 
 def create_dim_date():
-    date_range = pd.date_range(start="2022-01-01", end="2024-05-21", freq="D")
+    date_range = pd.date_range(start="2022-01-01", end="2025-05-21", freq="D")
     dim_date = pd.DataFrame(date_range, columns=['date_id'])
     dim_date['date_id'] = pd.to_datetime(dim_date['date_id'])
     dim_date['year'] = dim_date['date_id'].dt.year
