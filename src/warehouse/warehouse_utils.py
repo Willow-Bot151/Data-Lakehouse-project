@@ -3,7 +3,7 @@ import awswrangler as wr
 from botocore.exceptions import ClientError
 from botocore.session import get_session
 import pg8000
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, delete
     
 def create_dataframe_dictionaries(table_list):
     df_dict = {}
@@ -42,6 +42,7 @@ def connect_to_db_engine(secrets):
 def run_engine_to_insert_database(engine, input_dict):
     with engine.begin() as connection:
             for dataframe_name, dataframe in input_dict.items():
+                delete(dataframe_name)
                 dataframe.to_sql(name=dataframe_name, con=connection, if_exists='append', index=False)
                 success_message = "Succesfully moved dataframe rows to SQL database"
             return success_message
