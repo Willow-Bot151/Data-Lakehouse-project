@@ -1,19 +1,19 @@
 #----------------------------------------------------------------------------------------------------------------------------
-#---------------------------INGESTION-TERRAFORM-----------------------------------------------------------------------------
+#---------------------------INGESTION-TERRAFORM------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------
-
-data "archive_file" "dependancies" {
-  type = "zip"
-  output_file_mode = "0666"
-  source_dir = "../layer"
-  output_path = "../python.zip"
-}
 
 data "archive_file" "ingestion_lambda_file" {
   type        = "zip"
   output_file_mode = "0666"
-  source_dir = "../src/ingestion/utils/test_zip"   
+  source_dir = "../src/ingestion/"   
   output_path = "../terraform/deploy.zip"          
+}
+
+data "archive_file" "dependancies" {
+  type = "zip"
+  output_file_mode = "0666"
+  source_dir = "../aws_depedancy_layers/ingestion_layer"
+  output_path = "../python.zip"
 }
 
 resource "aws_lambda_function" "ingestion_lambda" {
@@ -73,10 +73,9 @@ data "archive_file" "processing_lambda_data" {
 data "archive_file" "processing_dependencies" {
   type        = "zip"
   output_file_mode = "0666"
-  source_dir = "../processing_layer"
+  source_dir = "../aws_depedancy_layers/processing_layer"
   output_path = "../processing_requirements.zip"       
 }
-
 
 resource "aws_lambda_permission" "allow_bucket" {
   statement_id  = "AllowExecutionFromS3Bucket"
@@ -114,7 +113,7 @@ resource "aws_lambda_layer_version" "processing_dependencies_layer" {
 }
 
 #----------------------------------------------------------------------------------------------------------------------------
-#---------------------------WAREHOUSE-TERRAFORM-----------------------------------------------------------------------------
+#---------------------------WAREHOUSE-TERRAFORM------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------
 
 data "archive_file" "warehouse_lambda_data" {
@@ -127,7 +126,7 @@ data "archive_file" "warehouse_lambda_data" {
 data "archive_file" "warehouse_dependencies" {
   type        = "zip"
   output_file_mode = "0666"
-  source_dir = "../warehouse_layer"
+  source_dir = "../aws_depedancy_layers/warehouse_layer"
   output_path = "../warehouse_requirements.zip"       
 }
 

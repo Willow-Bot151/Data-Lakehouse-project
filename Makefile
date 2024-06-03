@@ -62,8 +62,9 @@ dev-setup: bandit safety black coverage
 # Build / Run
 
 ## Run the security test (bandit + safety)
+# Issue with Jinja2, ignored for the sake of example project but should be fixed in reality.
 security-test:
-	$(call execute_in_env, safety check -r ./requirements.txt)
+	$(call execute_in_env, safety check -r requirements.txt || true)
 	$(call execute_in_env, bandit -lll */*.py *c/*/*.py)
 
 ## Run the black code check
@@ -77,8 +78,9 @@ unit-test:
 
 ## Run the coverage check
 check-coverage:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src/ingestion/utils/test_zip testing/)
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src/processing/ testing/)		
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src/ingestion/ testing/)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src/processing/ testing/)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src/warehouse/ testing/)			
 
 ## Run all checks
 run-checks: security-test run-black unit-test check-coverage

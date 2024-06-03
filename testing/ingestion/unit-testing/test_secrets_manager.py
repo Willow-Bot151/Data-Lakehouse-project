@@ -1,4 +1,4 @@
-from src.ingestion.utils.test_zip.connection import connect_to_db, close_connection
+from src.ingestion.connection import connect_to_db, close_connection
 from pg8000.native import Connection
 import pytest
 from unittest.mock import patch, MagicMock

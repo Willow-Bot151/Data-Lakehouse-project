@@ -1,5 +1,5 @@
 import pytest
-from src.ingestion.utils.test_zip.utils import (
+from src.ingestion.ingestion_utils import (
     get_current_timestamp,
     get_datestamp_from_table,
     get_datetime_now,

@@ -2,6 +2,19 @@ import pandas as pd
 import json
 
 def grab_currency_conversion_info():
+
+    """
+    Grabs currency information from a JSON, designed to match a currrency code with it's
+    respective full name.
+
+            Parameters:
+                    No parameters taken.
+
+            Returns:
+                    Dictionary of currencies with the key as currency code and the value
+                    as it's respective name.
+    """
+
     try:
         with open("src/processing/currency_information_data.json", "r") as file:
             currency_data = json.load(file)
@@ -12,6 +25,17 @@ def grab_currency_conversion_info():
             return currency_data
         
 def create_dim_currency(df):
+
+    """
+    Cleans and restructures the dataframe ready for the dimension table. References external
+    currency information in currency_information_data.json to find key values.
+
+            Parameters:
+                    Requires the currency dataframe.
+
+            Returns:
+                    Cleaned dataframe.
+    """
     
     currency_dict = grab_currency_conversion_info()
     

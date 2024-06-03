@@ -3,7 +3,7 @@ name: ingestion_workflow
 on:
   push:
     branches:
-      - main
+      - test
 
 jobs:
   run-tests: 

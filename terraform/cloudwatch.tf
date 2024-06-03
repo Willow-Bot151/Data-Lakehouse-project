@@ -117,30 +117,6 @@ resource "aws_sns_topic" "lambda_errors" {
     name = "lambda_handler_notify"
 }
 
-resource "aws_sns_topic_subscription" "email_lambda_error_messages_1" {
-  protocol  = "email"
-  endpoint  = "annshelly@hotmail.com"
-  topic_arn = aws_sns_topic.lambda_errors.arn
-}
-
-resource "aws_sns_topic_subscription" "email_lambda_error_messages_2" {
-  protocol  = "email"
-  endpoint  = "laxmiprasanna.immadi@gmail.com"
-  topic_arn = aws_sns_topic.lambda_errors.arn
-}
-
-resource "aws_sns_topic_subscription" "email_lambda_error_messages_3" {
-  protocol  = "email"
-  endpoint  = "lukedowney2014.ld@gmail.com"
-  topic_arn = aws_sns_topic.lambda_errors.arn
-}
-
-resource "aws_sns_topic_subscription" "email_lambda_error_messages_4" {
-  protocol  = "email"
-  endpoint  = "willowhart151@gmail.com"
-  topic_arn = aws_sns_topic.lambda_errors.arn
-}
-
 resource "aws_sns_topic_subscription" "email_lambda_error_messages_5" {
   protocol  = "email"
   endpoint  = "cammcburney95@gmail.com"

@@ -6,6 +6,17 @@ import pg8000
 from sqlalchemy import create_engine, delete, Table, MetaData
     
 def create_dataframe_dictionaries(table_list):
+
+    """
+        Creates a dictionary of dataframes with the key as the name and the value as the dataframe.
+
+                Parameters:
+                        table_list: table names to gather data for in the dictionary.
+
+                Returns:
+                        A dictionary of dataframes requested.
+    """
+    
     df_dict = {}
     for table in table_list:
         key_data_df = wr.s3.read_parquet(path=f's3://nc-team-reveries-processing/{table}/')
@@ -14,6 +25,17 @@ def create_dataframe_dictionaries(table_list):
     return df_dict
     
 def get_aws_secrets():
+        
+        """
+        Gathers secrets from AWS for a database connection.
+
+                Parameters:
+                        No inputs are taken for this function.
+
+                Returns:
+                        A dictionary of database credentials.
+        """
+        
         secret_name = "team_reveries_warehouse"
         region_name = "eu-west-2"
         session = get_session()
@@ -33,6 +55,17 @@ def get_aws_secrets():
             raise ClientError("Failure to return secrets from AWS")
             
 def connect_to_db_engine(secrets):
+
+    """
+    Uses dictionary of secrets to create a PSQL database connection.
+
+            Parameters:
+                    secrets: a dictionary of secrets.
+
+            Returns:
+                    Connection to database.
+    """
+    
     try:
         engine = create_engine(f"postgresql+pg8000://{secrets['username']}:{secrets['password']}@{secrets['host']}:{secrets['port']}/{secrets['database']}")
         return engine
@@ -40,16 +73,36 @@ def connect_to_db_engine(secrets):
         raise ConnectionError("Failed to open DB connection")
     
 def run_engine_to_insert_database(engine, input_dict):
+
+    """
+        Appends data rows from dataframes if the table is present in the database.
+
+                Parameters:
+                        engine: connection to the database using a sqlalchemy/pg8000 engine.
+                        input_dict: dictionary of dataframe names as a key and the dataframes as the value.
+
+                Returns:
+                        Success message when completed.
+    """
+    
     with engine.begin() as connection:
             for dataframe_name, dataframe in input_dict.items():
-                # metadata = MetaData()
-                # my_table = Table(dataframe_name, metadata)
-                # connection.execute(my_table.delete())
                 dataframe.to_sql(name=dataframe_name, con=connection, if_exists='append', index=False)
                 success_message = "Succesfully moved dataframe rows to SQL database"
             return success_message
 
 def delete_rows_from_warehouse(engine):
+
+    """
+        Deletes existing rows from warehouse.
+
+                Parameters:
+                        engine: connection to the database using a sqlalchemy/pg8000 engine.
+
+                Returns:
+                        No output.
+    """
+    
     tables = [
         'fact_sales_order',
         'dim_date', 
@@ -66,6 +119,17 @@ def delete_rows_from_warehouse(engine):
             connection.execute(my_table.delete())
 
 def close_connection(conn):
+
+    """
+    Closes connection to the PSQL database
+
+            Parameters:
+                    conn: connection to sqlalchemy/pg8000 engine
+
+            Returns:
+                    No output.
+    """
+
     try:
         conn.dispose()
     except ConnectionError:

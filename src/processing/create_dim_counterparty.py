@@ -1,6 +1,17 @@
 import pandas as pd
 
 def create_dim_counterparty(address_df, counterparty_df):
+
+    """
+    Cleans and restructures the dataframes ready for the dimension table.
+
+            Parameters:
+                    Requires the address and counterparty dataframes.
+
+            Returns:
+                    Cleaned dataframe.
+    """
+
     renamed_counterparty_df = counterparty_df.rename(columns={
         "legal_address_id":"address_id"
         })

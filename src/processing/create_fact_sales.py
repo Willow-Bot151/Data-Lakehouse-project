@@ -3,6 +3,17 @@ from datetime import datetime, date, time
 from decimal import Decimal
 
 def create_fact_sales(sales_order_df):
+
+    """
+    Cleans and restructures the dataframe ready for the fact table.
+
+            Parameters:
+                    Requires the sales order dataframes.
+
+            Returns:
+                    Cleaned dataframe.
+    """
+
     copied_sales_order = sales_order_df.copy(deep=True)
     renamed_sales_order = copied_sales_order.rename(columns={"staff_id":"sales_staff_id"})
     renamed_sales_order['created_date'] = renamed_sales_order['created_at'].apply(
@@ -44,28 +55,3 @@ def create_fact_sales(sales_order_df):
         "agreed_delivery_location_id",
     ], axis = 1)
     return result_df
-    """
-    takes: sales_order_df
-    returns: fact_sales_df (with foreign keys to dim_tables)
-    types:
-    "sales_order_id" int [not null]
-    "created_date" date [not null]
-    "created_time" time [not null]
-    "last_updated_date" date [not null]
-    "last_updated_time" time [not null]
-    "sales_staff_id" int [not null]
-    "counterparty_id" int [not null]
-    "units_sold" int [not null]
-    "unit_price" "numeric(10, 2)" [not null]
-    "currency_id" int [not null]
-    "design_id" int [not null]
-    "agreed_payment_date" date [not null]
-    "agreed_delivery_date" date [not null]
-    "agreed_delivery_location_id" int [not null]
-    raises: error if it cant construct the dataframe
-
-    new columns: times and dates
-    renames: staff_id > sales_staff_id
-    filter out: created_at and last_updated
-
-    """
